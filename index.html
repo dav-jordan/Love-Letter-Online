@@ -3,6 +3,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://unpkg.com/material-components-web/dist/material-components-web.min.css">
+    <script type="text/javascript" src="scripts/roomHandling.js"></script>
     <title>LLO</title>
     <style>
       .form {
@@ -21,12 +22,16 @@
 
   <body class="body" bgcolor="#510e00">
     <img src="images/logo.png" alt="logo" />
-    <form class="form" id="f1">
-      Username: <input type="text" name="user"><br/>
-      Room: <input type="text" name="room"><br/>
+    <form class="form" id="f1" onsubmit="return false;">
+      Username: <input type="text" name="user" id="username"><br/>
+      Room: <input type="text" name="room" id="lobby"><br/>
+      <button type="submit" form="f1" value="Join-Room" onclick="joinRoom()">
+        Join Room
+      </button>
+      <button type="submit" form="f1" value="Create-Room" onclick="createRoom()">
+        Create Room
+      </button>
     </form>
-    <button type="submit" form="f1" value="Join-Room">Join Room</button>
-    <button type="submit" form="f1" value="Create-Room">Create Room</button>
     <br/><br/>
     <fieldset class="rules">
       <h2>RULES</h2>
