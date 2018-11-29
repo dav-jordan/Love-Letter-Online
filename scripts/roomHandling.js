@@ -3,6 +3,7 @@ function joinRoom() {
   let lobby = document.getElementById("lobby").value;
   console.log("username: " + username);
   console.log("joining room " + lobby);
+  window.location.href = "lobby.html";
 }
 
 function createRoom() {
@@ -10,4 +11,5 @@ function createRoom() {
   let lobby = document.getElementById("lobby").value;
   console.log("username: " + username);
   console.log("creating room " + lobby);
+  window.location.href = "lobby.html";
 }
