@@ -1,0 +1,31 @@
+ Command {
+	"player": {
+		PLAYER_ID
+	}, // ID of Player performing the action
+	"action": {
+		CARD_NAME
+	}, // Name of the Card the player discarded
+	"parameter": {
+		ACTION_CHOICE
+	}, // Name of guessed Card of Guard or Baron is discarded
+	"target": {
+		TARGET_PLAYER
+	} // ID of Player being targeted
+}
+
+Return {
+	"effect": {
+		CARD_NAME
+	}, // Name of Card whose action is occuring
+	"info": {
+		CARD_NAME
+	}, // Card shown if Priest or Baron is discarded, or new Card if King or Prince effect
+	"outcome": {
+		ACTION_OUTCOME
+	} // If Guard guesses correctly, tells effected Player they are out.
+	// Returns outcome to Player who played the Guard
+	// If Baron is discarded, says if who won or tied.
+	// If Player who last discarded Handmaid is targeted, says untargetable.
+	// If Prince is played, returns the card the target discarded
+	// If Princess of discarded, Player is knocked out
+}
