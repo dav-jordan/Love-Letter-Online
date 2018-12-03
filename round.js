@@ -1,9 +1,10 @@
 class round{
 	// constructors(JSON players, int rounds)
-	constructor(id, players, rounds){
+	constructor(id, players, numPlayers, numRounds){
 		this.id = id;
 		this.players = players;
-		this.rounds = rounds;
+		this.numPlayers = numPlayers;
+		this.numRounds = numRounds;
 	}
 
 	get id(){
@@ -20,10 +21,19 @@ class round{
 		this._players = value;
 	}
 
-	get rounds(){
-		return this._players;
+	get numRounds(){
+		return this._numRouds;
 	}
-	set rounds(value){
-		this._rounds = value
+	set numRounds(value){
+		this._numRounds = value
+	}
+
+	get numPlayers(){
+		return this._numPlayers;
+	}
+	set numPlayers(value){
+		this._numPlayers = value
 	}
 }
+
+module.exports = round;
