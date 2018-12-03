@@ -20,10 +20,12 @@ function getPlayers() {
   html += "</fieldset>";
   document.getElementById("PlayersList").innerHTML = html;
 
+  //recursively call function to update when more players added
   setTimeout(getPlayers, 3000);
 }
 
 async function readyClicked() {
+  //waits for result of waitForRoom to continue
   console.log("waiting for match to start");
   let result = await waitForRoom();
   console.log("result");
