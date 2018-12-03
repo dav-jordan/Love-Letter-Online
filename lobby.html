@@ -4,9 +4,15 @@
   <head>
     <script type="text/javascript" src="scripts/room.js"></script>
     <style>
+      #heading { color: #a89701; }
       .body {
         text-align: center;
         background-color: #510e00
+      }
+      .players {
+        background-color: #FFFFFF;
+        margin:auto;
+        width: 30em;
       }
       .rules {
         background-color: #FFFFFF;
@@ -17,7 +23,7 @@
   </head>
 
   <body class="body" onload="getPlayers()">
-    <h1>This is the lobby... wait for the game to start</h1>
+    <h1 id="heading">This is the lobby... wait for the game to start</h1>
     <button type="submit" value="Ready" onclick="readyClicked()">
       Ready Up!
     </button>

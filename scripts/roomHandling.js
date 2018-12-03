@@ -7,7 +7,7 @@ function joinRoom() {
   }
   console.log("username: " + username);
   console.log("joining room " + lobby);
-  window.location.href = "lobby.html";
+  window.location.href = "lobby.html?room=" + lobby;
 }
 
 function createRoom() {
@@ -19,5 +19,5 @@ function createRoom() {
   }
   console.log("username: " + username);
   console.log("creating room " + lobby);
-  window.location.href = "lobby.html";
+  window.location.href = "lobby.html?room=" + lobby;
 }
