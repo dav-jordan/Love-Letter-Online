@@ -2,6 +2,7 @@
 
 <html>
   <head>
+    <script type="text/javascript" src="scripts/room.js"></script>
     <style>
       .body {
         text-align: center;
@@ -15,9 +16,13 @@
     </style>
   </head>
 
-  <body class="body">
+  <body class="body" onload="getPlayers()">
     <h1>This is the lobby... wait for the game to start</h1>
+    <button type="submit" value="Ready" onclick="readyClicked()">
+      Ready Up!
+    </button>
     <br/><br/>
+    <div id="PlayersList"></div>
     <fieldset class="rules">
       <h2>RULES</h2>
       <div>
