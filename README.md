@@ -17,9 +17,14 @@
 * takes no parameters
 * returns a list of `round` objects
 
-### createGames()
+### createGame()
 * takes `players` (json)
 * returns true if all goes well
 
 ### nextRound()
-* takes `
+* takes `instanceID` (int), `winnerID` (int)
+* returns true if all goes well
+
+### addPlayer()
+* takes `playerName` (string)
+* returns true if all goes well
