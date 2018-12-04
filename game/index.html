@@ -24,6 +24,10 @@
 						target: document.getElementById('target').value,
 						param: document.getElementById('param').value});
 		}
+
+		socket.on('newTurn', (data) => {
+			console.log('Active Player:' , data.currPlayer);
+		});
 	</script>	
   <input id="gamestate" type="button" value="gamestate" onclick="func();" />
   </body>

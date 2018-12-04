@@ -35,6 +35,18 @@ class Player {
 	set cards(value) {
 		this._cards = value;
 	}
+	
+	drawCard(card) {
+		this.cards.push(card);
+	}
+
+	discardCard(card) {
+		let ind = this.cards.find((element) => {
+			return element === card;
+		});
+
+		this.cards.splice(ind, 1);
+	}
 
 	// State methods
 	get state() {
@@ -50,5 +62,3 @@ class Player {
 }
 
 module.exports = Player;
-
-let play = new Player("123", "test", "Priest", "in");

@@ -29,9 +29,15 @@ http.listen(PORT, () => {
 });
 
 io.on('connection', (socket) => {
-	console.log('Connection initiated with socket' , socket.id);
+	console.log('\n\nConnection initiated with socket' , socket.id);
 	game.addPlayer(socket.id, "Test");
 	console.log('Players: ' , game.players);
+
+	socket.on('disconnect', () => {
+		console.log('\n\nDisconnecting socket' , socket.id);
+		game.removePlayer(socket.id);
+		console.log('Players: ' , game.players);
+	});
 
 	socket.on('test', (data) => {
 		console.log('\nData: ' , data);
@@ -40,14 +46,21 @@ io.on('connection', (socket) => {
 	socket.on('cardPlayed', (data) => {
 		let players = game.players;
 		let targetSocket = '';
+
+		let count = 0
 		for (var key in players) {
-			console.log('Checking' , players[key].socket , 'to' , data.target);
-			if(players[key].socket === data.target){
+			console.log('Checking' , count , 'to' , data.target);
+			if(count == data.target){
 				targetSocket = key;
 				break;
 			}
 		}
 
 		game.playCard(socket.id, targetSocket, data.card, data.param);
+		// TODO Invalid action handling
+
+		let nextPlayer = game.switchTurns();
+		io.sockets.emit('newTurn', { currPlayer: nextPlayer});
+		
 	});
 });
