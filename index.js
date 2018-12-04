@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		game.playCard(socket.id, targetSocket, data.card, data.param);
+		game.playCard(socket.id, data.target, data.card, data.param);
 		// TODO Invalid action handling
 
 		let nextPlayer = game.switchTurns();
