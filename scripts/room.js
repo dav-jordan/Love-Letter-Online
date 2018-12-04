@@ -12,6 +12,11 @@ function getPlayers() {
   console.log("getting players in lobby");
   let players = ["grr", "wires", "rego"];
 
+  //store in session Storage
+  let json = JSON.stringify(players);
+  console.log(json);
+  sessionStorage.setItem("opponents", json);
+
   //update html with player list
   let html = "<fieldset class=\"players\">";
   html += "<h3>Players in lobby</h3>";
