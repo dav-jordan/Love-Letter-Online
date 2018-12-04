@@ -8,11 +8,11 @@
 
   <body>
 	Card Played:
-	<input name="card" type="text" id="card" class="searchField"/>	
+	<input name="card" type="text" id="card" class="searchField"/>
 	Target:
-	<input name="card" type="text" id="target" class="searchField"/>	
+	<input name="card" type="text" id="target" class="searchField"/>
 	Parameters:
-	<input name="card" type="text" id="param" class="searchField"/>	
+	<input name="card" type="text" id="param" class="searchField"/>
 
 	<script src="/socket.io/socket.io.js"></script>
 
@@ -28,7 +28,7 @@
 		socket.on('newTurn', (data) => {
 			console.log('Active Player:' , data.currPlayer);
 		});
-	</script>	
+	</script>
   <input id="gamestate" type="button" value="gamestate" onclick="func();" />
   </body>
 
