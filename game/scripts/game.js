@@ -74,5 +74,10 @@ function discard1() {
 }
 function discard2() {
   console.log("discarding 2");
+  playerCard =
+  "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard1").src + "\" "
+  + "width=\"150\" height=\"200\"alt=\"card\" />";
+  takingTurn = false;
+  update();
   // setTimeout(discard2, 2000);
 }
