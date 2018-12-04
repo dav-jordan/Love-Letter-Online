@@ -27,7 +27,7 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			//this.players[socket] = new Player(socket, handle, undefined, "in");
-			this.players[socket] = new Player(socket, testId, ["Princess", "Priest","Prince"], "in");
+			this.players[socket] = new Player(socket, testId, ["Princess", "Priest","Prince", "King"], "in");
 			return true;
 		}
 		console.log('Player length: ' , Object.keys(this.players).length);
@@ -202,6 +202,18 @@ class Gamestate {
 			}else{
 				this.draw(targetSocket);
 			}
+		}else if(card === "King"){
+			var thisPlayer = this.getPlayer(playerSocket);
+			var targetPlayer = this.getPlayer(targetSocket);
+			
+			// swap
+			var tmpCardList = targetPlayer.cards;
+			targetPlayer.cards = thisPlayer.cards;
+			thisPlayer.cards = tmpCardList;
+		}else if(card === "Countess"){
+		}else if(card === "Princess"){
+			var thisPlayer = this.getPlayer(playerSocket);
+			thisPlayer.state = "out";
 		}
 
 		//e remove cards from hand and add to discard
