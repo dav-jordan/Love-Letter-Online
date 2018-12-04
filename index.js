@@ -1,7 +1,7 @@
 // Initialize packages
 var Express = require('express');
 var HTTP = require('http');
-var IO = require('socket.io);
+var IO = require('socket.io');
 var Game = require('./game');
 
 // Initialize package objects
@@ -30,4 +30,24 @@ http.listen(PORT, () => {
 
 io.on('connection', (socket) => {
 	console.log('Connection initiated with socket' , socket.id);
+	game.addPlayer(socket.id, "Test");
+	console.log('Players: ' , game.players);
+
+	socket.on('test', (data) => {
+		console.log('\nData: ' , data);
+	});
+
+	socket.on('cardPlayed', (data) => {
+		let players = game.players;
+		let targetSocket = '';
+		for (var key in players) {
+			console.log('Checking' , players[key].socket , 'to' , data.target);
+			if(players[key].socket === data.target){
+				targetSocket = key;
+				break;
+			}
+		}
+
+		game.playCard(socket.id, targetSocket, data.card, data.param);
+	});
 });

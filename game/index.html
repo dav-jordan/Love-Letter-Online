@@ -7,8 +7,25 @@
   </head>
 
   <body>
-  The content of the document......
-  <button class="foo-button mdc-button">Button</button>
+	Card Played:
+	<input name="card" type="text" id="card" class="searchField"/>	
+	Target:
+	<input name="card" type="text" id="target" class="searchField"/>	
+	Parameters:
+	<input name="card" type="text" id="param" class="searchField"/>	
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		var socket = io();
+
+		function func() {
+			socket.emit('cardPlayed', {card: document.getElementById('card').value,
+						target: document.getElementById('target').value,
+						param: document.getElementById('param').value});
+		}
+	</script>	
+  <input id="gamestate" type="button" value="gamestate" onclick="func();" />
   </body>
 
 </html>

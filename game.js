@@ -5,15 +5,15 @@ class Gamestate {
 		// Initiale variables
 		this.players = {};
 		this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
-					"Priest", "Priest", "Baron", "Baron", 
-					"Handmaid", "Handmaid", "Prince", "Prince",
-					"King", "Countess", "Princess"];
+			"Priest", "Priest", "Baron", "Baron", 
+			"Handmaid", "Handmaid", "Prince", "Prince",
+			"King", "Countess", "Princess"];
 		this.discard = [];
 
 	}
 
 	// Player methods
-    get players() {
+	get players() {
 		return this._players;
 	}
 
@@ -22,21 +22,24 @@ class Gamestate {
 	}
 
 	addPlayer(socket, handle) {
-		if(this.players.length < 4) {
-			let id = players.length();
-
-			this.players[socket] = new Player(socket, handle, undefined, "in");
+		if(Object.keys(this.players).length < 4) {
+			// TODO remove this test
+			let testId = Object.keys(this.players).length;
+			//this.players[socket] = new Player(socket, handle, undefined, "in");
+			this.players[socket] = new Player(socket, testId, ["Priest","Guard"], "in");
 			return true;
 		}
+		console.log('Player length: ' , Object.keys(this.players).length);
 		return false;
 	}
 
 	getPlayer(socket) {
+		console.log('Corresponding Player:' , this.players[socket]);
 		return this.players[socket];
 	}
 
 	// Card methods
-    get cards() {
+	get cards() {
 		return this._cards;
 	}
 
@@ -48,10 +51,10 @@ class Gamestate {
 		if(cards.length > 0) {
 			// Select card
 			let cardNum = Math.floor(Math.random() * this.cards.length);
-	
+
 			// Get card value
 			let ret = this.cards[cardNum];
-			
+
 			// Assign card to player
 			getPlayer(socket).cards.push(ret);
 
@@ -63,18 +66,27 @@ class Gamestate {
 	}
 
 	playCard(playerSocket, targetSocket, card, parameter) {
-		let playerCards = getPlayer(socket).cards;
-		
-		let ind = playerCards.findInd(card);
+		console.log('Player:' , playerSocket);
+		console.log('Target:' , targetSocket);
+		console.log('Card:' , card);
+		console.log('Param:' , parameter);
+
+		let playerCards = this.getPlayer(playerSocket).cards;
+		console.log('Player\'s cards:' , playerCards);
+
+		let ind = playerCards.find((element) => {
+			return element === card;
+		});
+		// remove cards from hand
 		playerCards.splice(ind, 1);
 
 		// TODO Add card event handling
 
-		addToDiscard(card);
+		this.addToDiscard(card);
 	}
 
 	// Discard methods
-    get discard() {
+	get discard() {
 		return this._discard;
 	}
 

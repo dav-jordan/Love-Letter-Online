@@ -14,9 +14,17 @@ class Player {
 		return this._socket;
 	}
 
+	set socket(value) {
+		this._socket = value;
+	}
+
 	// Handle methods
 	get handle() {
 		return this._handle;
+	}
+
+	set handle(value) {
+		this._handle = value;
 	}
 
 	// Cards methods
@@ -34,9 +42,13 @@ class Player {
 	}
 
 	set state(value) {
-		if(value !== "in" || value !== "invun" || value !== "out")
+		if(value !== "in" && value !== "invun" && value !== "out")
 			throw "Invalid Player State";
 		else
 			this._state = value;	
 	}
 }
+
+module.exports = Player;
+
+let play = new Player("123", "test", "Priest", "in");
