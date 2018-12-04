@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web/dist/material-components-web.min.css">
+    <script type="text/javascript" src="scripts/roomHandling.js"></script>
+    <title>LLO</title>
+    <style>
+      .form {
+        color: #a89701;
+      }
+      .body {
+        text-align: center;
+        background-color: #510e00
+      }
+      .rules {
+        background-color: #FFFFFF;
+        margin:auto;
+        width: 45em;
+      }
+    </style>
+  </head>
+
+  <body class="body">
+    <img src="images/logo.png" alt="logo" />
+    <form class="form" id="f1" onsubmit="return false;">
+      Username: <input type="text" name="user" id="username"><br/>
+      Room: <input type="text" name="room" id="lobby"><br/>
+      <button type="submit" form="f1" value="Join-Room" onclick="joinRoom()">
+        Join Room
+      </button>
+      <button type="submit" form="f1" value="Create-Room" onclick="createRoom()">
+        Create Room
+      </button>
+    </form>
+    <br/><br/>
+    <fieldset class="rules">
+      <h2>RULES</h2>
+      <div>
+        At the beginning of each turn, the player draws a card and picks a card
+        in their hand to discard. Something different happens depending on the
+        card discarded. The different cards as well as their effects and the
+        amount in the deck can be found below. The goal is to either be the last
+        player standing or have the highest value out of all other players when
+        the deck runs out.
+      </div>
+    </fieldset>
+  </body>
+
+</html>
