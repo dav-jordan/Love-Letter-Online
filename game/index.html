@@ -3,8 +3,11 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://unpkg.com/material-components-web/dist/material-components-web.min.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="scripts/sock.js"></script>
     <script type="text/javascript" src="scripts/roomHandling.js"></script>
     <title>LLO</title>
+    
     <style>
       .form {
         color: #a89701;
@@ -22,20 +25,6 @@
   </head>
 
   <body class="body">
-    <script src="/socket.io/socket.io.js"></script>
-  	<script>
-  		var socket = io();
-
-  		function func() {
-  			socket.emit('cardPlayed', {card: document.getElementById('card').value,
-  						target: document.getElementById('target').value,
-  						param: document.getElementById('param').value});
-  		}
-
-  		socket.on('newTurn', (data) => {
-  			console.log('Active Player:' , data.currPlayer);
-  		});
-  	</script>
     <img src="images/logo.png" alt="logo" />
     <form class="form" id="f1" onsubmit="return false;">
       Username: <input type="text" name="user" id="username"><br/>

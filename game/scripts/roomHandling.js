@@ -1,3 +1,8 @@
+function test(str) {
+  console.log("response received")
+  console.log(str);
+}
+
 function joinRoom() {
   let username = document.getElementById("username").value;
   let lobby = document.getElementById("lobby").value;
@@ -7,7 +12,11 @@ function joinRoom() {
   }
   console.log("username: " + username);
   console.log("joining room " + lobby);
-  window.location.href = "lobby.html?room=" + lobby;
+  //send command to server
+  sendCommand("gameStart", {});
+  sendCommand("addPlayer", {handle: username});
+  listen("players", test);
+  // window.location.href = "lobby.html?room=" + lobby;
 }
 
 function createRoom() {
