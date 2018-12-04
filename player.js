@@ -41,10 +41,8 @@ class Player {
 	}
 
 	discardCard(card) {
-		let ind = this.cards.find((element) => {
-			return element === card;
-		});
-
+		let ind = this.cards.indexOf(card);
+		console.log("CARD IS AT " + ind);
 		this.cards.splice(ind, 1);
 	}
 

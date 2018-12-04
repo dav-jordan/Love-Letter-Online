@@ -27,7 +27,6 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
-			
 			return true;
 		}
 		return false;
@@ -121,7 +120,26 @@ class Gamestate {
 			return ret;
 		}
 	}
-
+	getCardValue(card){
+		switch(card){
+			case "Guard":
+				return 1;
+			case "Priest":
+				return 2;
+			case "Baron":
+				return 3;
+			case "Handmaiden":
+				return 4;
+			case "Prince":
+				return 5;
+			case "King":
+				return 6;
+			case "Countess":
+				return 7;
+			case "Princess":
+				return 8;
+		}
+	}
 	playCard(playerSocket, targetSocket, card, parameter) {
 		console.log('Player:' , playerSocket);
 		console.log('Target:' , targetSocket);
@@ -131,31 +149,76 @@ class Gamestate {
 		let playerCards = this.getPlayer(playerSocket).cards;
 		console.log('Player\'s cards:' , playerCards);
 
-	
+
 		// remove cards from hand
+		console.log("\n\nREMOVING CARD NOW");
 		this.getPlayer(playerSocket).discardCard(card);
+		console.log(this.getPlayer(playerSocket));
 
 		// TODO Add card event handling
 
-		console.log(`${playerSocket} played the ${card} card!`);
-
-		console.log(typeof(targetSocket));
-
-		console.log(Object.keys(this.players));
-		console.log(this.players[`${targetSocket}`]);
-		
-		if(card === "Guard"){
-			var target = this.players[`{${targetSocket}`];
-			if(target._cards.includes(parameter)){
-				console.log(`PLAYER ${playerSocket} GUESSED RIGHT!`);
+		// console.log(this.players[targetSocket]);
+		if(card == "Guard"){
+			console.log("Card is guard");
+			var targetPlayer = this.getPlayer(targetSocket);
+			if(targetPlayer.cards.includes(parameter)){
+				console.log("Got em boi");
+				targetPlayer.discardCard(parameter);
+				targetPlayer.state = "out";
+				this.addToDiscard(parameter);
 			}
+		}else if(card === "Baron"){
+			console.log("Card is BARON");
+			var targetPlayer = this.getPlayer(targetSocket);
+			var thisPlayer = this.getPlayer(playerSocket);
+
+			let targetHandVal = this.getCardValue(targetPlayer.cards[0]);
+			let thisHandVal = this.getCardValue(thisPlayer.cards[0]);
+
+			console.log(targetHandVal + "," + thisHandVal);
+
+			if(targetHandVal > thisHandVal){
+				this.addToDiscard(this.thisPlayer.cards[0]);
+				thisPlayer.discardCard(thisPlayer.cards[0]);
+				thisPlayer.status = "out";
+			}else{
+				this.addToDiscard(this.targetPlayer.cards[0]);
+				targetPlayer.discardCard(targetPlayer.cards[0]);
+				targetPlayer.status = "out";
+			}
+		}else if(card === "Handmaiden"){
+			console.log("Card is Handmaiden");
+			var thisPlayer = this.getPlayer(playerSocket);
+			thisPlayer.state = "invun";
+		}else if(card === "Prince"){
+			var targetPlayer = this.getPlayer(targetSocket);
+			var discarded = targetPlayer.cards[1];
+			targetPlayer.discardCard(discarded);
+			if(discarded === "Princess"){
+				targetPlayer.status = "out";
+			}else{
+				this.draw(targetSocket);
+			}
+		}else if(card === "King"){
+			var thisPlayer = this.getPlayer(playerSocket);
+			var targetPlayer = this.getPlayer(targetSocket);
+			
+			// swap
+			var tmpCardList = targetPlayer.cards;
+			targetPlayer.cards = thisPlayer.cards;
+			thisPlayer.cards = tmpCardList;
+		}else if(card === "Countess"){
+		}else if(card === "Princess"){
+			var thisPlayer = this.getPlayer(playerSocket);
+			thisPlayer.state = "out";
 		}
-		
-		// remove cards from hand and add to discard
-		this.getPlayer(playerSocket).discardCard(card);
-		
+
+		//e remove cards from hand and add to discard
+		// this.getPlayer(playerSocket).discardCard(card);
 		this.addToDiscard(card);
+		console.log(this.players);
 	}
+
 
 	// Discard methods
 	get discard() {
