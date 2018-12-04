@@ -26,11 +26,10 @@ class Gamestate {
 		if(Object.keys(this.players).length < 4) {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
-			//this.players[socket] = new Player(socket, handle, undefined, "in");
-			this.players[socket] = new Player(socket, testId, ["Priest","Guard"], "in");
+			this.players[socket] = new Player(socket, handle, [], "in");
+			
 			return true;
 		}
-		console.log('Player length: ' , Object.keys(this.players).length);
 		return false;
 	}
 
@@ -39,7 +38,6 @@ class Gamestate {
 	}
 
 	getPlayer(socket) {
-		console.log('Corresponding Player:' , this.players[socket]);
 		return this.players[socket];
 	}
 
@@ -106,7 +104,7 @@ class Gamestate {
 	}
 
 	draw(socket) {
-		if(cards.length > 0) {
+		if(this.cards.length > 0) {
 			// Select card
 			let cardNum = Math.floor(Math.random() * this.cards.length);
 
@@ -114,7 +112,8 @@ class Gamestate {
 			let ret = this.cards[cardNum];
 
 			// Assign card to player
-			getPlayer(socket).cards.push(ret);
+			let player = this.getPlayer(socket);
+			player.cards.push(ret);
 
 			// Remove from array
 			this.cards.splice(cardNum, 1);
@@ -138,8 +137,20 @@ class Gamestate {
 
 		// TODO Add card event handling
 
+		console.log(`${playerSocket} played the ${card} card!`);
 
+		console.log(typeof(targetSocket));
 
+		console.log(Object.keys(this.players));
+		console.log(this.players[`${targetSocket}`]);
+		
+		if(card === "Guard"){
+			var target = this.players[`{${targetSocket}`];
+			if(target._cards.includes(parameter)){
+				console.log(`PLAYER ${playerSocket} GUESSED RIGHT!`);
+			}
+		}
+		
 		// remove cards from hand and add to discard
 		this.getPlayer(playerSocket).discardCard(card);
 		

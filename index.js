@@ -8,7 +8,7 @@ var Game = require('./game');
 var app = Express();
 var http = HTTP.Server(app);
 var io = IO(http);
-let game = new Game();
+let game = undefined;
 
 
 // Statically serve files
@@ -30,17 +30,43 @@ http.listen(PORT, () => {
 
 io.on('connection', (socket) => {
 	console.log('\n\nConnection initiated with socket' , socket.id);
-	game.addPlayer(socket.id, "Test");
-	console.log('Players: ' , game.players);
 
 	socket.on('disconnect', () => {
-		console.log('\n\nDisconnecting socket' , socket.id);
-		game.removePlayer(socket.id);
-		console.log('Players: ' , game.players);
+		if(game !== undefined) {
+			console.log('\n\nDisconnecting socket' , socket.id);
+			game.removePlayer(socket.id);
+			console.log('Players: ' , game.players);
+		}
 	});
 
-	socket.on('test', (data) => {
-		console.log('\nData: ' , data);
+	socket.on('gameStart', (data) => {
+		game = new Game();
+
+		io.sockets.emit('players', {});
+	});
+
+	socket.on('addPlayer', (data) => {
+		if(game !== undefined) {
+			console.log('Adding player...');
+			game.addPlayer(socket.id, data.handle);	
+
+			game.draw(socket.id);
+		}
+
+		console.log('\nPlayers: ' , game.players);
+
+		let thisPlayer = game.getPlayer(socket.id);
+		socket.emit('yourPlayer', { player: thisPlayer });
+		
+
+		let nextPlayer = game.switchTurns();
+		io.sockets.emit('newTurn', { currPlayer: nextPlayer });
+	});
+
+	socket.on('turnStart', (data) => {
+		if(game !== undefined) {
+			game.draw(socket.id);
+		}
 	});
 
 	socket.on('cardPlayed', (data) => {
@@ -49,14 +75,14 @@ io.on('connection', (socket) => {
 
 		let count = 0
 		for (var key in players) {
-			console.log('Checking' , count , 'to' , data.target);
+			console.log('\n\nChecking' , count , 'to' , data.target);
 			if(count == data.target){
 				targetSocket = key;
 				break;
 			}
 		}
 
-		game.playCard(socket.id, targetSocket, data.card, data.param);
+		game.playCard(socket.id, data.target, data.card, data.param);
 		// TODO Invalid action handling
 
 		let nextPlayer = game.switchTurns();
