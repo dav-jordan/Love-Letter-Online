@@ -10,6 +10,7 @@ class loveConnector{
 	}
 
 	scoreboard(){
+		console.log("scoreboard!");
 		return new Promise((resolve, reject) => {
 				//callback to initiate connection to AWS RDS
 				var connection = mysql.createConnection({host:this.host, user:this.user, password:this.password, port:this.port});
@@ -24,11 +25,21 @@ class loveConnector{
 
 										//Iterate through JSON object returned by SQL query and add new SnackPack objects to list_snackpacks
 										var scoreboard={};
+										var max = null;
 										for(var r in result){
-										var roundTmp = result[r];
-										scoreboard[result[r].handle] = result[r].roundsWon;
+											var roundTmp = result[r];
+											scoreboard[result[r].handle] = result[r].roundsWon;
+											if(max != null){
+												if(result[r].roundsWon > max.roundsWon){
+													max = result[r];
+												}
+											}else{
+												max = result[r];
+											}
 										}
-										resolve(scoreboard);
+										console.log("this is the score: " + scoreboard);
+										var tmpList = [scoreboard, max.handle];
+										resolve(tmpList);
 										});
 								});
 						});
@@ -114,7 +125,7 @@ class loveConnector{
 						console.log(winnerID);
 						connection.query(`select * from loveLetter.users where handle="${winnerID}"`, function(err, res, fields){
 						if (err) reject(err);
-							console.log(res);
+							console.log(`The winner is ${winnerID}!`);
 							var x = res[0].roundsWon + 1;
 						connection.query((`update loveLetter.users set roundsWon=${x} where handle="${winnerID}"`), function(err, result, fields){
 
