@@ -238,7 +238,7 @@ class Gamestate {
 				//ret['info'] = target.cards[0];
 				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! It\'s a tie!';
 			}
-		} else if(card === "Handmaiden") {
+		} else if(card === "Handmaid") {
 			player.state = "invun";
 
 			ret['outcome'] = player.handle + ' discarded Handmaid, they are invunerable till next turn!';

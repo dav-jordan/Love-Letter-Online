@@ -110,7 +110,7 @@ function getPlayers() {
 function begin() {
   sendCommand("gameStart", {});
   listen("yourPlayer", function(data) {
-    console.log(data.player._cards);
+    // console.log(data.player._cards);
     playerCard = "<img id=\"pCard1\" src=\"images/cards/" + data.player._cards[0].toLowerCase()
       + ".jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
     playerCards();
@@ -164,12 +164,13 @@ function discard1() {
     getPlayers();
   } else {
     console.log("no target required");
+    // update();
   }
   playerCard =
   "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard2").src + "\" "
   + "width=\"150\" height=\"200\"alt=\"card\" />";
   takingTurn = false;
-  update();
+   update();
   // setTimeout(discard1, 2000);
 }
 function discard2() {
@@ -181,6 +182,7 @@ function discard2() {
     getPlayers();
   } else {
     console.log("no target required");
+
   }
   playerCard =
   "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard1").src + "\" "
@@ -206,12 +208,14 @@ function target0() {
     }
   }
   var t = document.getElementById("opp0Name").innerText;
-  console.log(t);
+  // console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
   listen("discardUpdate", function(data) {
     console.log(data);
   });
+  update();
 }
+
 function target1() {
   let c = discard.split("").reverse().join("")
   c = c.substring(4, c.indexOf("/"));
@@ -233,7 +237,9 @@ function target1() {
   listen("discardUpdate", function(data) {
     console.log(data);
   });
+  update();
 }
+
 function target2() {
 
 }
