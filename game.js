@@ -11,8 +11,6 @@ class Gamestate {
 		  "King", "Countess", "Princess"];
 		this.discard = [];
 		this.id;
-		// let loveConnector = loveDB();
-		// loveConnector.createGame([]).then(data => this.id = data).catch(err => console.log(err));
 	}
 
 	// Player methods
@@ -29,8 +27,8 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
-			// let loveConnector = loveDB();
-			// loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
+			let loveConnector = new loveDB();
+			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
 			return true;
 		}
 		return false;
