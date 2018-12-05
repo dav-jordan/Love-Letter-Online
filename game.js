@@ -103,6 +103,10 @@ class Gamestate {
 		this._cards = value;
 	}
 
+	cardsInDeck() {
+		return cards.length;
+	}
+
 	draw(socket) {
 		if(this.cards.length > 0) {
 			// Select card
@@ -113,7 +117,7 @@ class Gamestate {
 
 			// Assign card to player
 			let player = this.getPlayer(socket);
-			player.cards.push(ret);
+			player.drawCard(ret);
 
 			// Remove from array
 			this.cards.splice(cardNum, 1);
