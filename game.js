@@ -156,7 +156,11 @@ class Gamestate {
 		console.log('Param:' , parameter);
 		let playerCards = this.getPlayer(playerSocket).cards;
 		console.log('Player\'s cards:' , playerCards);
-
+		
+		if(this.getPlayer(targetSocket).state == "invun"){
+			console.log("Invalid target!");
+			return;
+		}
 
 		// remove cards from hand
 		console.log("\n\nREMOVING CARD NOW");
