@@ -6,6 +6,9 @@
     <script type="text/javascript" src="scripts/sock.js"></script>
     <script type="text/javascript" src="scripts/game.js"></script>
     <style>
+      .headers {
+        color: #a89701;
+      }
       .body {
         text-align: center;
         background-color: #510e00
@@ -14,6 +17,11 @@
         background-color: #FFFFFF;
         margin:auto;
         width: 45em;
+      }
+      .discarded {
+        background-color: #FFFFFF;
+        margin:auto;
+        width: 30em;
       }
       .cards {
         align-items: center;
@@ -26,12 +34,10 @@
 
   <body class="body" onload="start()" id="bod">
     <div id="opponentCards" class="cards">
-      <h1>test</h1>
-      <h1>test</h1>
     </div>
     <br /> <br />
     <div id="playerCards" class="cards"></div>
-    <h2 id="info"></h2>
+    <h2 id="info" class="headers"></h2>
     <fieldset class="rules">
       <h2>RULES</h2>
       <div>
@@ -41,7 +47,19 @@
         amount in the deck can be found below. The goal is to either be the last
         player standing or have the highest value out of all other players when
         the deck runs out.
+        Princess(1): Lose if discarded
+        Countess(1): Discard if you have king or prince in your hand
+        King(1): Trade hands with another player
+        Prince(2): Make one player discard their hand
+        Handmaid(2): Protection until your next turn
+        Baron(2): Compare hands, lower hand is out
+        Priest(2): Look at someone else's hand
+        Guard(5): Guess someone's hand. If correct, they are out.
       </div>
+    </fieldset>
+    <fieldset class="discarded">
+      <h2>Discarded Cards</h2>
+      <h6 id="cards"></h6>
     </fieldset>
   </body>
 </html>

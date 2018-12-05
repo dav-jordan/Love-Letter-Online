@@ -11,6 +11,28 @@ var turn = true;
 var user = sessionStorage.getItem("user");
 var discard;
 
+listen("outcome", function(data) {
+  console.log(data);
+  document.getElementById("info").innerText = data.outcome;
+  update();
+})
+listen("newTurn", takeTurn);
+listen("discardUpdate", function(data) {
+  console.log(data);
+  let arr = data.discardPile;
+  arr.sort();
+  var text = '[';
+  for(var i = 0; i < arr.length; i++)
+    text += arr[i] + ', ';
+  text += ']'
+  document.getElementById("cards").innerText = text;
+});
+listen("yourPlayer", function(data) {
+  console.log(data);
+  if(data.player.status === "out") {
+    document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
+  }
+});
 function opponentCards() {
   // console.log("displaying opponent cards");
   // for(var i = 0; i < 3; i++) {
@@ -51,11 +73,6 @@ function playersTurn(data) {
 function takeTurn(data) {
   console.log(data);
   if(data.currPlayer._handle !== user) {
-    listen("outcome", function(data) {
-      console.log(data);
-      document.getElementById("info").innerText = data.outcome;
-      update();
-    })
     return;
   }
   console.log("this player's turn");
@@ -76,7 +93,6 @@ function takeTurn(data) {
 
 //updates state every 2 seconds
 function update() {
-  listen("newTurn", takeTurn);
 
   opponentCards();
   playerCards();
@@ -108,7 +124,7 @@ function getPlayers() {
       if(user === data.players[i]._handle)
         continue;
       opponents[i] = "<div>" + opponentTemplate + " id=\"opp" + i + "\" onclick=\"target" + i + "()\" />"
-        + "<h3 id=\"opp" + i + "Name\">" + data.players[i]._handle + "</h3></div>";
+        + "<h3 class=\"headers\" id=\"opp" + i + "Name\">" + data.players[i]._handle + "</h3></div>";
     }
     opponentCards();
   })
@@ -229,9 +245,6 @@ function target0() {
   var t = document.getElementById("opp0Name").innerText;
   // console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-  listen("discardUpdate", function(data) {
-    console.log(data);
-  });
   update();
 }
 
@@ -253,9 +266,7 @@ function target1() {
   var t = document.getElementById("opp1Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-  listen("discardUpdate", function(data) {
-    console.log(data);
-  });
+
   update();
 }
 
