@@ -194,19 +194,19 @@ class Gamestate {
 			// Check if the targets card is the guessed card
 			if(target.cards.includes(parameter)){
 				ret['info'] = "Success";
-				ret['outcome'] = player.handle , 'discarded a Guard. They successfully guessed that' , target.handle , 'had a' , parameter + '!';
+				ret['outcome'] = player.handle + ' discarded a Guard. They successfully guessed that ' + target.handle + ' had a ' + parameter + '!';
 
 				console.log("Guess Success");
 				target.discardCard(parameter);
 				target.state = "out";
 				this.addToDiscard(parameter);
 			} else {
-				ret['outcome'] = player.handle , 'discarded a Guard. They failed to guess' , target.handle + '\'s card!';
+				ret['outcome'] = player.handle + ' discarded a Guard. They failed to guess ' + target.handle + '\'s card!';
 			}
 		} else if(card === "Priest"){
 			// Return info of card in hand
 			ret['info'] = target.cards[0];
-			ret['outcome'] = player.handle , 'discarded Priest, targeting' , target.handle + '!';
+			ret['outcome'] = player.handle + ' discarded Priest, targeting ' + target.handle + '!';
 		} else if(card === "Baron"){
 			let targetHandVal = this.getCardValue(target.cards[0]);
 			let thisHandVal = this.getCardValue(pplayer.cards[0]);
@@ -217,22 +217,22 @@ class Gamestate {
 				player.status = "out";
 
 				//ret['info'] = target.cards[0];
-				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'lost!';
+				ret['outcome'] = player.handle + ' discarded Baron, targeting ' + target.handle + '! And ' + player.handle + ' lost!';
 			} else if(targetHandVal < thisHandVal){
 				this.addToDiscard(target.cards[0]);
 				target.discardCard(target.cards[0]);
 				target.status = "out";
 
 				//ret['info'] = target.cards[0];	
-				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'won!';
+				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! And ' + player.handle + ' won!';
 			} else {	
 				//ret['info'] = target.cards[0];	
-				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! It\'s a tie!';
+				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! It\'s a tie!';
 			}
 		} else if(card === "Handmaiden") {
 			player.state = "invun";
 			
-			ret['outcome'] = player.handle , 'discarded Handmaid, they are invunerable till next turn!';
+			ret['outcome'] = player.handle + ' discarded Handmaid, they are invunerable till next turn!';
 		} else if(card === "Prince") {
 			let discarded = target.cards[0];
 			target.discardCard(discarded);
@@ -241,20 +241,20 @@ class Gamestate {
 			} else{
 				this.draw(targetSocket);
 			}
-			ret['outcome'] = player.handle , 'discarded Prince, targeting' , target.handle + '! They discarded a' , discarded + '!';
+			ret['outcome'] = player.handle + ' discarded Prince, targeting ' + target.handle + '! They discarded a ' + discarded + '!';
 		} else if(card === "King") {
 			// Players Swap Hands
 			var tmpCardList = target.cards;
 			target.cards = player.cards;
 			player.cards = tmpCardList;
 
-			ret['outcome'] = player.handle , 'discarded King, switching hands with' , target.handle + '!';
+			ret['outcome'] = player.handle + ' discarded King, switching hands with ' + target.handle + '!';
 		} else if(card === "Countess") {
-			ret['outcome'] = target.handle , 'discarded a Countess!';
+			ret['outcome'] = target.handle + ' discarded a Countess!';
 		} else if(card === "Princess") {	
 			player.state = "out";
 			
-			ret['outcome'] = target.handle , 'discarded a Princess! They are out of the round!';
+			ret['outcome'] = target.handle + ' discarded a Princess! They are out of the round!';
 		}
 
 		// Remove cards from hand and add to discard
