@@ -159,17 +159,18 @@ io.on('connection', (socket) => {
 		}
 		var x = game.checkEnd();
 		console.log(x);
-		if(x){
-			console.log("Game Over");
-			console.log(x);
-			io.sockets.emit('gameOver', {});
-			return;
-		}
+		if(x != null){
+			x.then(function(data){
+				console.log("Game Over");
+				console.log(data);
+				io.sockets.emit('gameOver', {});
+			}).catch(err => console.log(err));
+		}else{
 
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 
 		let nextPlayer = game.switchTurns();
-		io.sockets.emit('newTurn', { currPlayer: nextPlayer.getHidden() });
+		io.sockets.emit('newTurn', { currPlayer: nextPlayer.getHidden() });}
 	});
 });

@@ -253,11 +253,11 @@ class Gamestate {
 
 			ret['outcome'] = player.handle + ' discarded King, switching hands with ' + target.handle + '!';
 		} else if(card === "Countess") {
-			ret['outcome'] = target.handle + ' discarded a Countess!';
+			ret['outcome'] = player.handle + ' discarded a Countess!';
 		} else if(card === "Princess") {	
 			player.state = "out";
 			
-			ret['outcome'] = target.handle + ' discarded a Princess! They are out of the round!';
+			ret['outcome'] = player.handle + ' discarded a Princess! They are out of the round!';
 		}
 
 		// Remove cards from hand and add to discard
@@ -282,6 +282,7 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
+		console.log(this.players);
 		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
@@ -314,17 +315,11 @@ class Gamestate {
 			}			
 		}
 		loveConnector.nextRound(lastPlayer.handle);
-		console.log(inCount == 1);
-		loveConnector.scoreboard()
-			.then(function(data){
-				var retList = [lastPlayer.handle, data];
-				console.log(data);
-				if(inCount == 1){
-					console.log("GAME OVER"); 
-					return retList;
-				}
-			})
-			.catch(err => console.log(err));
+		if(inCount == 1){
+			console.log("GAME OVER");
+			return loveConnector.scoreboard();
+		}
+		return null;
 	}
 }
 
