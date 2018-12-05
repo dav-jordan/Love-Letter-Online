@@ -11,7 +11,7 @@ var user = sessionStorage.getItem("user");
 var discard;
 
 function opponentCards() {
-  console.log("displaying opponent cards");
+  // console.log("displaying opponent cards");
   // for(var i = 0; i < 3; i++) {
   //   opponents[i] =
   //     "<img src=\"images/cards/face-down.jpeg\" width=\"150\" height=\"200\"alt=\"card\" />"
@@ -25,7 +25,7 @@ function opponentCards() {
 }
 
 function playerCards() {
-  console.log("displaying player card");
+  // console.log("displaying player card");
   //retrieve player card from server
   document.getElementById("playerCards").innerHTML = playerCard;
 }
@@ -36,10 +36,12 @@ function playersTurn(data) {
   takingTurn = true;
 
   //draw another card
-  let nCard = "<input id=\"pCard2\" onclick=\"discard2()\" type=\"image\" src=\"images/cards/" + data.player._cards[1].toLowerCase() + ".jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
-  playerCard =  "<input id=\"pCard1\"  onclick=\"discard1()\" type=\"image\" src=\""
-  + document.getElementById("pCard1").src + "\" width=\"150\" height=\"200\"alt=\"card\" />"
-  + nCard;
+  if(data.player._cards[1] != undefined) {
+    let nCard = "<input id=\"pCard2\" onclick=\"discard2()\" type=\"image\" src=\"images/cards/" + data.player._cards[1].toLowerCase() + ".jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
+    playerCard =  "<input id=\"pCard1\"  onclick=\"discard1()\" type=\"image\" src=\""
+    + document.getElementById("pCard1").src + "\" width=\"150\" height=\"200\"alt=\"card\" />"
+    + nCard;
+  }
 
   document.getElementById("playerCards").innerHTML = playerCard;
   turn = true;
@@ -48,6 +50,9 @@ function playersTurn(data) {
 function takeTurn(data) {
   console.log(data);
   if(data.currPlayer._handle !== user) {
+    listen("outcome", function(data) {
+      console.log(data);
+    })
     return;
   }
   console.log("this player's turn");
@@ -114,7 +119,7 @@ function begin() {
 }
 
 function host(data) {
-  console.log(data);
+  // console.log(data);
   // getPlayers();
   if(data.isHost) {
     var card;
@@ -128,6 +133,7 @@ function host(data) {
     // });
     listen("yourPlayer", function(data) {
       console.log(data.player);
+
       playerCard = "<img id=\"pCard1\" src=\"images/cards/" + data.player._cards[0].toLowerCase()
         + ".jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
       playerCards();
@@ -138,11 +144,11 @@ function host(data) {
 
 function start() {
   sendCommand("lockPlayers", {});
-  console.log(user);
+  // console.log(user);
   listen("players", function(data) {
     sendCommand("addPlayer", {handle: user});
     serverSocket.on("host", (data) => {
-      console.log("response received");
+      // console.log("response received");
       host(data);
     })
   });
@@ -150,7 +156,7 @@ function start() {
 }
 
 function discard1() {
-  console.log("discarding 1");
+  // console.log("discarding 1");
   let card1 = document.getElementById("pCard1").src;
   discard = card1;
   if(!(card1.includes("handmaid") || card1.includes("princess") || card1.includes("countess"))) {
@@ -167,7 +173,7 @@ function discard1() {
   // setTimeout(discard1, 2000);
 }
 function discard2() {
-  console.log("discarding 2");
+  // console.log("discarding 2");
   let card2 = document.getElementById("pCard2").src;
   discard = card2;
   if(!(card2.includes("handmaid") || card2.includes("princess") || card2.includes("countess"))) {

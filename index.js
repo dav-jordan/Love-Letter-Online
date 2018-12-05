@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
 			game.draw(socket.id);
 
 		}
-
+		let sockets = Object.keys(io.sockets.sockets);
 		// Refresh all player's states
 		for(let i = 0; i < sockets.length; i++) {
 			// Gets the player object and gives it to that user
@@ -144,7 +144,8 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		let ret = game.playCard(socket.id, data.target, data.card, data.param);
+		console.log('Target:' , data.target);
+		let ret = game.playCard(socket.id, game.getSocket(data.target).socket, data.card, data.param);
 
 		// Check for error
 		if(ret['error'] !== undefined) {
