@@ -7,6 +7,8 @@
   </head>
 
   <body>
+	Handle:
+	<input name"handle" type="text" id="handle" class="searchField"/>
 	Card Played:
 	<input name="card" type="text" id="card" class="searchField"/>	
 	Target:
@@ -19,17 +21,43 @@
 	<script>
 		var socket = io();
 
-		function func() {
+		function lock() {
+			socket.emit('lockPlayers', {});
+		}
+
+		function start() {
+			socket.emit('gameStart', {});
+		}
+	
+		function playCard(){
 			socket.emit('cardPlayed', {card: document.getElementById('card').value,
 						target: document.getElementById('target').value,
 						param: document.getElementById('param').value});
 		}
 
+		socket.on('yourPlayer', (data) => {
+			console.log('\nYou are' , data.player);
+		});
+
 		socket.on('newTurn', (data) => {
-			console.log('Active Player:' , data.currPlayer);
+			console.log('\nActive Player:' , data.currPlayer);
+		});
+
+		socket.on('players', (data) => {
+			console.log('\nSubmitting players to server');
+			socket.emit('addPlayer', {handle: document.getElementById('handle').value});	
+		});
+		
+		socket.on('gameOver', (data) => {
+			console.log("game over");
+			document.getElementById("test").innerHTML = "game over";
 		});
 	</script>	
-  <input id="gamestate" type="button" value="gamestate" onclick="func();" />
+
+  <input id="gamestate" type="button" value="Lock" onclick="lock()" />
+  <input id="start" type="button" value="Start" onclick="start()" />
+  <input id="gamestate" type="button" value="Play Card" onclick="playCard();" />
+
   </body>
 
 </html>
