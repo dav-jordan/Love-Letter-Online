@@ -34,6 +34,10 @@ listen("yourPlayer", function(data) {
   }
   update();
 });
+listen("gameOver", function(data) {
+  document.getElementById("bod").innerHTML = "<h1 class=\"headers\">Game Over</h1>";
+});
+
 function opponentCards() {
   // console.log("displaying opponent cards");
   // for(var i = 0; i < 3; i++) {
