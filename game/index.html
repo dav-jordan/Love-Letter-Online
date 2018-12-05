@@ -49,8 +49,12 @@
 		});
 		
 		socket.on('gameOver', (data) => {
-			console.log("game over");
-			document.getElementById("test").innerHTML = "game over";
+			console.log('Game over');
+			document.getElementById('test').innerHTML = 'game over';
+		});
+
+		socket.on('host', (data) => {
+			console.log('You\'re host!');
 		});
 	</script>	
 

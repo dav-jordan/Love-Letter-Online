@@ -31,7 +31,12 @@ http.listen(PORT, () => {
 io.on('connection', (socket) => {
 	console.log('\n\nConnection initiated with socket' , socket.id);
 
+	if(Object.keys(io.sockets.sockets).length === 1) {
+		socket.emit('host', { message: "You're the host!" });
+	}
+
 	// Removes players who disconnect from the game
+	/*
 	socket.on('disconnect', () => {
 		if(game !== undefined) {
 			console.log('\n\nDisconnecting socket' , socket.id);
@@ -39,6 +44,7 @@ io.on('connection', (socket) => {
 			console.log('Players: ' , game.players);
 		}
 	});
+	*/
 
 	// Creates instance of the game and asks all players for their Handle
 	socket.on('lockPlayers', (data) => {
