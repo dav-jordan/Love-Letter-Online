@@ -9,10 +9,12 @@ var opponents = [
 var takingTurn = false;
 var turn = true;
 var user = sessionStorage.getItem("user");
+var result;
 var discard;
 
 listen("outcome", function(data) {
   console.log(data);
+  result = data.outcome;
   document.getElementById("info").innerText = data.outcome;
   update();
 })
@@ -29,13 +31,26 @@ listen("discardUpdate", function(data) {
 });
 listen("yourPlayer", function(data) {
   console.log(data);
-  if(data.player.status === "out") {
+  if(data.player._state === "out") {
     document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
   }
   update();
 });
 listen("gameOver", function(data) {
-  document.getElementById("bod").innerHTML = "<h1 class=\"headers\">Game Over</h1>";
+  console.log(data);
+  let increment = "<fieldset class=\"discarded\"><h1>Leaderboard</h1>[";
+  Object.keys(data.scoreboard).forEach(function(key) {
+    increment += key + ": ";
+    increment += data.scoreboard[key] + ", ";
+  });
+  increment += "]</fieldset>";
+  document.getElementById("bod").innerHTML = "<h1 class=\"headers\">" + result + "</h1>"
+    + "<button type=\"submit\" value=\"Ready\" onclick=\"readyClicked()\">"
+    +  "Start Game"
+    + "</button>" + increment;
+});
+listen("cardPlayError", function(data) {
+  console.log(data);
 });
 
 function opponentCards() {
@@ -85,13 +100,19 @@ function takeTurn(data) {
 
   listen("info", function(data) {
     console.log(data);
-    alert("They have " + data.info + "!");
+    if(data.info !== "Success")
+      alert("They have " + data.info + "!");
+    else
+      alert("Success!");
   });
 
   if(turn) {
     turn = false;
     sendCommand("turnStart", {});
     listen("yourPlayer", function(data) {
+      if(data.player._state === "out") {
+        document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
+      }
       playersTurn(data);
     });
   }
@@ -127,8 +148,13 @@ function getPlayers() {
   listen("playerList", function(data) {
     console.log(data);
     for(var i = 0; i < data.players.length; i++) {
-      if(user === data.players[i]._handle)
+      if(user === data.players[i]._handle) {
         continue;
+      }
+      if(data.players[i]._state === "out") {
+        opponents[i] = "<div></div>";
+        continue;
+      }
       opponents[i] = "<div>" + opponentTemplate + " id=\"opp" + i + "\" onclick=\"target" + i + "()\" />"
         + "<h3 class=\"headers\" id=\"opp" + i + "Name\">" + data.players[i]._handle + "</h3></div>";
     }
@@ -141,6 +167,9 @@ function begin() {
   sendCommand("gameStart", {});
   listen("yourPlayer", function(data) {
     // console.log(data.player._cards);
+    if(data.player._state === "out") {
+      document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
+    }
     playerCard = "<img id=\"pCard1\" src=\"images/cards/" + data.player._cards[0].toLowerCase()
       + ".jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
     playerCards();
@@ -162,6 +191,9 @@ function host(data) {
     //   console.log(data);
     // });
     listen("yourPlayer", function(data) {
+      if(data.player._state === "out") {
+        document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
+      }
       console.log(data.player);
 
       playerCard = "<img id=\"pCard1\" src=\"images/cards/" + data.player._cards[0].toLowerCase()
@@ -200,7 +232,7 @@ function discard1() {
     c = c.substring(4, c.indexOf("/"));
     c = c.split("").reverse().join("");
     c = c.charAt(0).toUpperCase() + c.slice(1);
-    sendCommand("cardPlayed", {target: undefined, card: c, param: ""});
+    sendCommand("cardPlayed", {target: undefined, card: c, param: undefined});
   }
   playerCard =
   "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard2").src + "\" "
@@ -251,6 +283,9 @@ function target0() {
   var t = document.getElementById("opp0Name").innerText;
   // console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
+  listen("cardPlayError", function(data) {
+    console.log(data);
+  });
   update();
 }
 
@@ -272,10 +307,35 @@ function target1() {
   var t = document.getElementById("opp1Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-
+  listen("cardPlayError", function(data) {
+    console.log(data);
+  });
+  getPlayers();
   update();
 }
 
 function target2() {
+  let c = discard.split("").reverse().join("")
+  c = c.substring(4, c.indexOf("/"));
+  c = c.split("").reverse().join("");
+  c = c.charAt(0).toUpperCase() + c.slice(1);
+  console.log(c);
 
+  var guess;
+  if(c === "Guard") {
+    guess = prompt("What is your guess? (Handmaid, Priest, Princess, Baron, King, Countess, Prince)");
+    while(guess === "Guard") {
+      alert("Cannot guess guard!");
+      guess = prompt("What is your guess? (Handmaid, Priest, Princess, Baron, King, Countess, Prince)");
+    }
+  }
+  var t = document.getElementById("opp2Name").innerText;
+  console.log(t);
+  sendCommand("cardPlayed", {target: t, card: c, param: guess});
+  listen("info", function(data) {
+    console.log(data);
+    update();
+  });
+  getPlayers();
+  update();
 }

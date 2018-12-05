@@ -168,13 +168,15 @@ io.on('connection', (socket) => {
 		var x = game.checkEnd();
 		console.log(x);
 		if(x != null){
-			x.then(function(data){
+			let winner = x.winner;
+			x.score.then(function(data){
+				let scoreboard = data[0];
 				console.log("Game Over");
 				console.log(data);
-				io.sockets.emit('gameOver', {});
+				io.sockets.emit('gameOver', { "winner":winner, "scoreboard":scoreboard });
 			}).catch(err => console.log(err));
 
-		} else { 
+		} else {
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 

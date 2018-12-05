@@ -175,7 +175,7 @@ class Gamestate {
 			target = this.getPlayer(targetSocket);
 
 			// Check if target is invun, if they are, return an error
-			if(player.state === "invun" || player.state === "out"){
+			if(target.state === "invun" || target.state === "out"){
 				console.log("Invalid target!");
 				ret["error"] = "Invalid Target";
 				return ret;
@@ -303,12 +303,12 @@ class Gamestate {
 			console.log(maxPlayer.handle + " won");
 			var scoreboard;
 			loveConnector.nextRound(maxPlayer.handle);
-			loveConnector.scoreboard()
-				.then(data =>{
-					var retList = [maxPlayer.handle, data];
-					return retList;	
-				})
-				.catch(err => console.log(err));
+			return {score: loveConnector.scoreboard(), winner:maxPlayer.handle };
+				// .then(data =>{
+				// 	var retList = [maxPlayer.handle, data];
+				// 	return retList;
+				// })
+				// .catch(err => console.log(err));
 		}
 		let inCount = 0;
 		let lastPlayer = null;
@@ -320,9 +320,15 @@ class Gamestate {
 			}
 		}
 		loveConnector.nextRound(lastPlayer.handle);
+		console.log(lastPlayer.handle + " won the round!");
 		if(inCount == 1){
 			console.log("GAME OVER");
-			return loveConnector.scoreboard();
+			return { score: loveConnector.scoreboard(), winner: lastPlayer.handle };
+				// .then(data =>{
+				// 	var retList = [lastPlayer.handle, data];
+				// 	return retList;
+				// })
+				// .catch(err => console.log(err));
 		}
 		return null;
 	}
