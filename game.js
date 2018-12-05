@@ -287,7 +287,6 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
-		console.log(this.players);
 		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
@@ -313,7 +312,7 @@ class Gamestate {
 		let inCount = 0;
 		let lastPlayer = null;
 		for(var x in this.players){
-			if(this.players[x].state != "out"){
+			if(this.players[x].state !==  "out"){
 				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
