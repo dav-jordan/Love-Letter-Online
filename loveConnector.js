@@ -9,26 +9,26 @@ class loveConnector{
 		this.port = 3306;
 	}
 
-	getGames(){
+	scoreboard(){
 		return new Promise((resolve, reject) => {
 				//callback to initiate connection to AWS RDS
 				var connection = mysql.createConnection({host:this.host, user:this.user, password:this.password, port:this.port});
 				connection.connect(function(err) {
 						if (err) throw err;
 						//callback to send query
-						connection.query("SELECT * FROM loveLetter.rounds", function(err, result, fields){
+						connection.query("SELECT * FROM loveLetter.users", function(err, result, fields){
 								if (err) throw err;
 								//callback to end connection
 								connection.end(function(err) {
 										if (err) throw err;
 
 										//Iterate through JSON object returned by SQL query and add new SnackPack objects to list_snackpacks
-										var listRounds=[];
+										var scoreboard={};
 										for(var r in result){
 										var roundTmp = result[r];
-										listRounds.push(new round(roundTmp.it, roundTmp.players, roundTmp.numPlayers, roundTmp.numRounds));
+										scoreboard[result[r].handle] = result[r].roundsWon;
 										}
-										resolve(listRounds);
+										resolve(scoreboard);
 										});
 								});
 						});
@@ -104,41 +104,26 @@ class loveConnector{
 	}
 
 	// incrementRound(int instanceID, int winnerID)
-	nextRound(instanceID, winnerID){
+	nextRound(winnerID){
 		return new Promise((resolve, reject) => {
 				//callback to initiate connection to AWS RDS
 				var connection = mysql.createConnection({host:this.host, user:this.user, password:this.password, port:this.port});
 				connection.connect(function(err) {
 						if (err) throw err;
 						//callback to send query
-						connection.query(`select * from loveLetter.rounds where it=${instanceID}`, function(err, count, fields){
+						console.log(winnerID);
+						connection.query(`select * from loveLetter.users where handle="${winnerID}"`, function(err, res, fields){
+						if (err) reject(err);
+							console.log(res);
+							var x = res[0].roundsWon + 1;
+						connection.query((`update loveLetter.users set roundsWon=${x} where handle="${winnerID}"`), function(err, result, fields){
+
 								if(err) reject(err);
-								if(count.length > 0){
-								let roundNum = count[0].numRounds + 1;
-								console.log(roundNum);
-								var updateJSON = JSON.parse(count[0].players);
-								console.log(updateJSON);
-								for(var x in updateJSON){
-								if(updateJSON[x].name === winnerID){
-								updateJSON[x].wins++;
-								break;
-								}
-								}
-								var updateString = JSON.stringify(updateJSON);
-								connection.query((`update loveLetter.rounds set numRounds=${roundNum}, players='${updateString}' where it=${instanceID}`), function(err, result, fields){
-										if(err) reject(err);
-										connection.end(function (err){
-												console.log("success");
-												if (err) reject(err);
-												resolve(true);
-												});
+								connection.end(function (err){
+										if (err) reject(err);
+										resolve(true);
 										});
-								}else{
-									connection.end(function (err){
-											if(err) reject(err);
-											reject("ID NOT FOUND");
-											});
-								}
+								});
 						});
 				});
 		});
@@ -146,77 +131,49 @@ class loveConnector{
 
 	// addPlayer(string name)
 	addPlayer(playerName){
+		console.log("ADDING " + playerName + "TO THE DB");
 		return new Promise((resolve, reject) => {
 				//callback to initiate connection to AWS RDS
 				var connection = mysql.createConnection({host:this.host, user:this.user, password:this.password, port:this.port});
 				connection.connect(function(err) {
+						console.log("adding player step 1");
 						if (err) throw err;
 						//callback to send query
-						connection.query(`select * from loveLetter.rounds`, function(err, count, fields){
+						connection.query((`insert into loveLetter.users values("${playerName}", 0)`), function(err, result, fields){
+								console.log("adding player step 3");
 								if(err) reject(err);
-
-								var gameJSON;
-								var gameID;
-								console.log(count);
-								for(var x in count){
-								if(count[x].numPlayers < 5){
-								gameJSON = JSON.parse(count[x].players);
-								// console.log(count[x].players);
-								gameID = x;
-								break;
-								}
-								}
-								gameJSON.push({"id": gameJSON.length, "name": playerName, "wins":0});
-								var jsonString = JSON.stringify(gameJSON);
-								connection.query((`update loveLetter.rounds set players='${jsonString}' where it=${gameID}`), function(err, result, fields){
-										if(err) reject(err);
-										connection.end(function (err){
-												console.log("success");
-												if (err) reject(err);
-												resolve(true);
-												});
+								connection.end(function (err){
+										console.log("success");
+										if (err) reject(err);
+										resolve(true);
 										});
+								});
 						});
 				});
-		});
 	}
 
-	checkWinner(instanceID){
+	checkWinner(){
+		console.log("checking winnner");
 		return new Promise((resolve, reject) => {
 				//callback to initiate connection to AWS RDS
 				var connection = mysql.createConnection({host:this.host, user:this.user, password:this.password, port:this.port});
 				connection.connect(function(err) {
 						if (err) throw err;
 						//callback to send query
-						connection.query(`select * from loveLetter.rounds where it=${instanceID}`, function(err, count, fields){
-								if(err) reject(err);
-								if(count.length > 0){
-									connection.end(function (err){
-										var updateJSON = JSON.parse(count[0].players);
-										console.log(updateJSON);
-										for(var x in updateJSON){
-											if(updateJSON[x].wins == 5){
-												resolve(updateJSON[x].name);
-												break;
-											}
+						connection.query(`select * from loveLetter.users`, function(err, count, fields){
+								connection.end(function (err){
+										for(var x in count){
+										if(count[x].roundsWon == 5){
+										console.log(count[x].handle + " won");
+										resolve(count[x].handle);
 										}
-										// console.log("success");
-										// if (err) reject(err);
-										resolve(0);
-									});
-								}else{
-									connection.end(function (err){
-											if(err) reject(err);
-											reject("ID NOT FOUND");
-											});
-									}
+										}
+										resolve(false);
+										});
 								});
+						});
 				});
-		});
 	}
-
-}	
-
+}
 //Allows module to be exposed
 module.exports = loveConnector;
-
