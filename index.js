@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
 
 			// Gets the player object and gives it to that user
 			let thisPlayer = game.getPlayer(socket.id);
-			socket.emit('yourPlayer', { player: thisPlayer });
+			// socket.emit('yourPlayer', { player: thisPlayer });
 		}
 
 		console.log('\nPlayers: ' , game.players);
@@ -101,11 +101,11 @@ io.on('connection', (socket) => {
 		io.sockets.emit('newTurn', { currPlayer: startingPlayer.getHidden() });
 	});
 
-	socket.on('getPlayers', (data) => {	
+	socket.on('getPlayers', (data) => {
 		let playerList = [];
 
 		for(let key in game.players) {
-			playerList.push(game.players[key].getHidden());			
+			playerList.push(game.players[key].getHidden());
 		}
 
 		socket.emit('playerList', { players: playerList });
@@ -116,8 +116,9 @@ io.on('connection', (socket) => {
 	socket.on('turnStart', (data) => {
 		if(game !== undefined) {
 			game.draw(socket.id);
-		}
 
+		}
+		let sockets = Object.keys(io.sockets.sockets);
 		// Refresh all player's states
 		for(let i = 0; i < sockets.length; i++) {
 			// Gets the player object and gives it to that user
@@ -126,6 +127,7 @@ io.on('connection', (socket) => {
 			// Get socket and emit
 			let currSocket = io.sockets.sockets[sockets[i]];
 			currSocket.emit('yourPlayer', { player: thisPlayer });
+
 		}
 	});
 
@@ -142,17 +144,22 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		let ret = game.playCard(socket.id, data.target, data.card, data.param);
-		
+		console.log('Target:' , data.target);
+		let target = undefined;
+		if(data.target !== undefined) {
+			target = game.getSocket(data.target).socket
+		}
+		let ret = game.playCard(socket.id, target, data.card, data.param);
+
 		// Check for error
 		if(ret['error'] !== undefined) {
 			socket.emit('cardPlayError', {});
 			return;
-		} 
+		}
 		// Check for info
 		if(ret['info'] !== undefined) {
 			socket.emit('info', { info: ret['info'] });
-		}	
+		}
 		// Check for outcome
 		if(ret['outcome'] !== undefined) {
 			io.sockets.emit('outcome', { outcome: ret['outcome'] });
@@ -165,8 +172,7 @@ io.on('connection', (socket) => {
 				console.log(data);
 				io.sockets.emit('gameOver', {});
 			}).catch(err => console.log(err));
-		}else{
-
+		} else { 
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 

@@ -6,7 +6,7 @@ class Gamestate {
 		this.players = {};
 		this.activePlayer = -1;
 		this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
-		  "Priest", "Priest", "Baron", "Baron", 
+		  "Priest", "Priest", "Baron", "Baron",
 		  "Handmaid", "Handmaid", "Prince", "Prince",
 		  "King", "Countess", "Princess"];
 		this.discard = [];
@@ -27,10 +27,12 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
+
 			console.log("Adding to database " + handle);
 			let loveConnector = new loveDB();
 			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
 			console.log("Finished adding to db");
+
 			return true;
 		}
 		return false;
@@ -42,6 +44,15 @@ class Gamestate {
 
 	getPlayer(socket) {
 		return this.players[socket];
+	}
+
+	getSocket(handle) {
+		for(var key in this.players) {
+			if(this.players[key].handle === handle)
+				return this.players[key];
+		}
+
+		return undefined;
 	}
 
 	// Activer player methods
@@ -61,7 +72,7 @@ class Gamestate {
 				inPlayers++;
 		}
 
-		// If there are 0 or 1 players remaining 
+		// If there are 0 or 1 players remaining
 		// or there is no active player (i.e. that game has not started),
 		// the round is over
 		if(inPlayers < 2 || this.activePlayer === -1)
@@ -78,7 +89,7 @@ class Gamestate {
 					return this.players[key];
 				}else {
 					// If the player is out, switch turns, recursing this method
-					return this.switchTurns();	
+					return this.switchTurns();
 				}
 			}
 			count++;
@@ -165,7 +176,7 @@ class Gamestate {
 		let target;
 		let playerCards = player.cards;
 		console.log('Player\'s cards:' , playerCards);
-		
+		var target;
 		// Check if target exists
 		if(targetSocket !== undefined) {
 			target = this.getPlayer(targetSocket);
@@ -226,15 +237,15 @@ class Gamestate {
 				target.discardCard(target.cards[0]);
 				target.state = "out";
 
-				//ret['info'] = target.cards[0];	
+				//ret['info'] = target.cards[0];
 				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! And ' + player.handle + ' won!';
-			} else {	
-				//ret['info'] = target.cards[0];	
+			} else {
+				//ret['info'] = target.cards[0];
 				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! It\'s a tie!';
 			}
-		} else if(card === "Handmaiden") {
+		} else if(card === "Handmaid") {
 			player.state = "invun";
-			
+
 			ret['outcome'] = player.handle + ' discarded Handmaid, they are invunerable till next turn!';
 		} else if(card === "Prince") {
 			let discarded = target.cards[0];
@@ -312,7 +323,7 @@ class Gamestate {
 				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
-			}			
+			}
 		}
 		loveConnector.nextRound(lastPlayer.handle);
 		if(inCount == 1){
