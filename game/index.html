@@ -21,11 +21,12 @@
 	<script>
 		var socket = io();
 
-		function func() {
-			socket.emit('gameStart', {card: document.getElementById('card').value,
-						target: document.getElementById('target').value,
-						param: document.getElementById('param').value});
-			console.log(document.getElementById('target').value);
+		function lock() {
+			socket.emit('lockPlayers', {});
+		}
+
+		function start() {
+			socket.emit('gameStart', {});
 		}
 	
 		function playCard(){
@@ -52,10 +53,10 @@
 			document.getElementById("test").innerHTML = "game over";
 		});
 	</script>	
-  <input id="gamestate" type="button" value="gameStart" onclick="func();" />
 
-  <input id="gamestate" type="button" value="play card" onclick="playCard();" />
-  <p id="test"></p>
+  <input id="gamestate" type="button" value="Lock" onclick="lock()" />
+  <input id="start" type="button" value="Start" onclick="start()" />
+  <input id="gamestate" type="button" value="Play Card" onclick="playCard();" />
 
   </body>
 

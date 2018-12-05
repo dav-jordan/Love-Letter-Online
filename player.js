@@ -1,5 +1,4 @@
-let stateEnum = Object.freeze({1:"in", "invun":2, "out":3})
-
+var HiddenPlayer = require('./hiddenPlayer');
 
 class Player {
 	constructor(socket, handle, cards, state) {
@@ -35,11 +34,18 @@ class Player {
 	set cards(value) {
 		this._cards = value;
 	}
+
+	// Get number of cards in hand
+	numOfCards() {
+		return this.cards.length;
+	}
 	
+	// Add a card to hand
 	drawCard(card) {
 		this.cards.push(card);
 	}
 
+	// Remove a card from hand
 	discardCard(card) {
 		let ind = this.cards.indexOf(card);
 		console.log("CARD IS AT " + ind);
@@ -60,6 +66,10 @@ class Player {
 			throw "Invalid Player State";
 		else
 			this._state = value;	
+	}
+
+	getHidden() {
+		return new HiddenPlayer(this, undefined, undefined, undefined);
 	}
 }
 
