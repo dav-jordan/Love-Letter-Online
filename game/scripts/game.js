@@ -41,8 +41,14 @@ function playersTurn() {
   document.getElementById("playerCards").innerHTML = playerCard;
 }
 
+function takeTurn(data) {
+  console.log(data);
+}
+
 //updates state every 2 seconds
 function update() {
+  listen("newTurn", takeTurn);
+
   opponentCards();
   playerCards();
 
@@ -50,17 +56,32 @@ function update() {
   if(takingTurn)
     return;
   //check if it is the player's turn
-  let playerTurn = true;
-  if(playerTurn){
-    console.log("player");
-    playersTurn();
-    playerTurn = false;
-  } else {
-    console.log("opponent");
-  }
+  // let playerTurn = true;
+  // if(playerTurn){
+  //   console.log("player");
+  //   playersTurn();
+  //   playerTurn = false;
+  // } else {
+  //   console.log("opponent");
+  // }
 
   //update every two seconds
-  setTimeout(update, 2000);
+  // setTimeout(update, 2000);
+}
+
+function test(data) {
+  console.log(data);
+}
+
+function start() {
+  sendCommand("lockPlayers", {});
+  let user = sessionStorage.getItem("user");
+  console.log(user);
+  listen("players", function(data) {
+    sendCommand("addPlayer", {handle: user});
+    listen("yourPlayer", test);
+  });
+  update();
 }
 
 function discard1() {

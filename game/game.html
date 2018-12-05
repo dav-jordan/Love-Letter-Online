@@ -2,6 +2,8 @@
 
 <html>
   <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="scripts/sock.js"></script>
     <script type="text/javascript" src="scripts/game.js"></script>
     <style>
       .body {
@@ -22,7 +24,7 @@
     </style>
   </head>
 
-  <body class="body" onload="update()">
+  <body class="body" onload="start()">
     <div id="opponentCards" class="cards">
       <h1>test</h1>
       <h1>test</h1>

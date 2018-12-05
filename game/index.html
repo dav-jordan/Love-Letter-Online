@@ -7,7 +7,6 @@
     <script type="text/javascript" src="scripts/sock.js"></script>
     <script type="text/javascript" src="scripts/roomHandling.js"></script>
     <title>LLO</title>
-    
     <style>
       .form {
         color: #a89701;
@@ -27,16 +26,10 @@
   <body class="body">
     <img src="images/logo.png" alt="logo" />
     <form class="form" id="f1" onsubmit="return false;">
-      Username: <input type="text" name="user" id="username"><br/>
-      Room: <input type="text" name="room" id="lobby"><br/>
       <button type="submit" form="f1" value="Join-Room" onclick="joinRoom()">
         Join Room
       </button>
-      <button type="submit" form="f1" value="Create-Room" onclick="createRoom()">
-        Create Room
-      </button>
     </form>
-      <input id="gamestate" type="button" value="gamestate" onclick="func();" />
     <br/><br/>
     <fieldset class="rules">
       <h2>RULES</h2>

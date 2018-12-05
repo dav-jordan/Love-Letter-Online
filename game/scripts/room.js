@@ -8,30 +8,23 @@ function waitForRoom() {
   });
 }
 
-function getPlayers() {
-  console.log("getting players in lobby");
-  let players = ["grr", "wires", "rego"];
-
-  //store in session Storage
-  let json = JSON.stringify(players);
-  console.log(json);
-  sessionStorage.setItem("opponents", json);
-
-  //update html with player list
-  let html = "<fieldset class=\"players\">";
-  html += "<h3>Players in lobby</h3>";
-  for (var i = 0; i < 3; i++)
-    html += "<h4>" + players[i] + "</h4>";
-  html += "</fieldset>";
-  document.getElementById("PlayersList").innerHTML = html;
-
-  //recursively call function to update when more players added
-  setTimeout(getPlayers, 3000);
+function promptforUser() {
+  console.log("prompting");
+  alert("Game is starting!");
+  let user = prompt("Enter a username:");
+  sessionStorage.setItem("user", user);
+  window.location.href = "game.html";
 }
 
-async function readyClicked() {
+
+function readyClicked() {
   //waits for result of waitForRoom to continue
   console.log("waiting for match to start");
-  let result = await waitForRoom();
+  promptforUser();
+  // listen("players", promptforUser);
   console.log("result");
+}
+
+function prepare() {
+  listen("players", promptforUser);
 }
