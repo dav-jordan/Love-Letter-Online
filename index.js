@@ -30,8 +30,14 @@ http.listen(PORT, () => {
 
 io.on('connection', (socket) => {
 	console.log('\n\nConnection initiated with socket' , socket.id);
+	/*
+	if(Object.keys(io.sockets.sockets).length === 1) {
+		socket.emit('host', { message: "You're the host!" });
+	}
+	*/
 
 	// Removes players who disconnect from the game
+	/*
 	socket.on('disconnect', () => {
 		if(game !== undefined) {
 			console.log('\n\nDisconnecting socket' , socket.id);
@@ -39,6 +45,7 @@ io.on('connection', (socket) => {
 			console.log('Players: ' , game.players);
 		}
 	});
+	*/
 
 	// Creates instance of the game and asks all players for their Handle
 	socket.on('lockPlayers', (data) => {
@@ -53,6 +60,13 @@ io.on('connection', (socket) => {
 			// Create the player
 			console.log('\nAdding player...');
 			game.addPlayer(socket.id, data.handle);
+
+			// Tell first added player they're host
+			if(Object.keys(game.players).length === 1) {
+				socket.emit('host', { isHost : true });
+			} else {
+				socket.emit('host', { isHost : false });
+			}
 
 			// Gets the player object and gives it to that user
 			let thisPlayer = game.getPlayer(socket.id);
@@ -79,8 +93,21 @@ io.on('connection', (socket) => {
 			currSocket.emit('yourPlayer', { player: thisPlayer });
 		}
 
-		let nextPlayer = game.switchTurns();
-		io.sockets.emit('newTurn', { currPlayer: nextPlayer.getHidden() });
+		// Get the Starting Player
+		let startingPlayer = game.switchTurns();
+
+		// Tell all Players the Starting Player
+		io.sockets.emit('newTurn', { currPlayer: startingPlayer.getHidden() });
+	});
+
+	socket.on('getPlayers', (data) => {	
+		let playerList = [];
+
+		for(let key in game.players) {
+			playerList.push(game.players[key].getHidden());			
+		}
+
+		socket.emit('playerList', { players: playerList });
 	});
 
 	// When that player starts their turn they draw a card
@@ -88,6 +115,8 @@ io.on('connection', (socket) => {
 	socket.on('turnStart', (data) => {
 		if(game !== undefined) {
 			game.draw(socket.id);
+			
+			socket.emit('yourPlayer', { player: game.getPlayer(socket.id) });
 		}
 	});
 

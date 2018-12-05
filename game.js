@@ -69,7 +69,6 @@ class Gamestate {
 			if(count === this.activePlayer) {
 				if(this.players[key].state !== "out"){
 					// If that player is not out, return them
-					this.draw(key);
 					return this.players[key];
 				}else {
 					// If the player is out, switch turns, recursing this method
