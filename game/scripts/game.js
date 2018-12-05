@@ -307,8 +307,10 @@ function target1() {
   var t = document.getElementById("opp1Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-  listen("cardPlayError", function(data) {
-    console.log(data);
+  listen("outcome", function(data) {
+    result = data.outcome;
+    document.getElementById("info").innerText = data.outcome;
+    update();
   });
   getPlayers();
   update();
@@ -332,8 +334,9 @@ function target2() {
   var t = document.getElementById("opp2Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-  listen("info", function(data) {
-    console.log(data);
+  listen("outcome", function(data) {
+    result = data.outcome;
+    document.getElementById("info").innerText = data.outcome;
     update();
   });
   getPlayers();
