@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
 
 			// Gets the player object and gives it to that user
 			let thisPlayer = game.getPlayer(socket.id);
-			socket.emit('yourPlayer', { player: thisPlayer });
+			// socket.emit('yourPlayer', { player: thisPlayer });
 		}
 
 		console.log('\nPlayers: ' , game.players);
@@ -100,11 +100,11 @@ io.on('connection', (socket) => {
 		io.sockets.emit('newTurn', { currPlayer: startingPlayer.getHidden() });
 	});
 
-	socket.on('getPlayers', (data) => {	
+	socket.on('getPlayers', (data) => {
 		let playerList = [];
 
 		for(let key in game.players) {
-			playerList.push(game.players[key].getHidden());			
+			playerList.push(game.players[key].getHidden());
 		}
 
 		socket.emit('playerList', { players: playerList });
@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
 	socket.on('turnStart', (data) => {
 		if(game !== undefined) {
 			game.draw(socket.id);
-			
+
 			socket.emit('yourPlayer', { player: game.getPlayer(socket.id) });
 		}
 	});
