@@ -5,11 +5,10 @@ class Gamestate {
 		// Initiale variables
 		this.players = {};
 		this.activePlayer = -1;
-		/*this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
+		this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
 		  "Priest", "Priest", "Baron", "Baron", 
 		  "Handmaid", "Handmaid", "Prince", "Prince",
-		  "King", "Countess", "Princess"];*/
-		this.cards = ["Guard", "Baron", "Handmaid", "Prince"];
+		  "King", "Countess", "Princess"];
 		this.discard = [];
 
 	}
