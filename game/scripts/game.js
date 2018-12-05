@@ -38,15 +38,20 @@ listen("yourPlayer", function(data) {
 });
 listen("gameOver", function(data) {
   console.log(data);
+  let increment = "<fieldset class=\"discarded\"><h1>Leaderboard</h1>[";
+  Object.keys(data.scoreboard).forEach(function(key) {
+    increment += key + ": ";
+    increment += data.scoreboard[key] + ", ";
+  });
+  increment += "]</fieldset>";
   document.getElementById("bod").innerHTML = "<h1 class=\"headers\">" + result + "</h1>"
     + "<button type=\"submit\" value=\"Ready\" onclick=\"readyClicked()\">"
     +  "Start Game"
-    + "</button>";
+    + "</button>" + increment;
 });
 listen("cardPlayError", function(data) {
   console.log(data);
 });
-
 
 function opponentCards() {
   // console.log("displaying opponent cards");
@@ -278,6 +283,9 @@ function target0() {
   var t = document.getElementById("opp0Name").innerText;
   // console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
+  listen("cardPlayError", function(data) {
+    console.log(data);
+  });
   update();
 }
 
@@ -299,7 +307,9 @@ function target1() {
   var t = document.getElementById("opp1Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-
+  listen("cardPlayError", function(data) {
+    console.log(data);
+  });
   getPlayers();
   update();
 }
@@ -322,7 +332,10 @@ function target2() {
   var t = document.getElementById("opp2Name").innerText;
   console.log(t);
   sendCommand("cardPlayed", {target: t, card: c, param: guess});
-
+  listen("info", function(data) {
+    console.log(data);
+    update();
+  });
   getPlayers();
   update();
 }

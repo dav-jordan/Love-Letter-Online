@@ -24,6 +24,8 @@ class Gamestate {
 
 	addPlayer(socket, handle) {
 		if(Object.keys(this.players).length < 4) {
+			// TODO remove this test
+			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
 			let loveConnector = new loveDB();
 			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
@@ -168,20 +170,14 @@ class Gamestate {
 		let playerCards = player.cards;
 		console.log('Player\'s cards:' , playerCards);
 		var target;
-
-		// Set player state if invun
-		if(player.state == "invun"){
-			this.getPlayer(playerSocket).state = "in";
-		}
-
 		// Check if target exists
 		if(targetSocket !== undefined) {
 			target = this.getPlayer(targetSocket);
 
 			// Check if target is invun, if they are, return an error
-			if(player.state === "invun" || player.state === "out"){
+			if(target.state === "invun" || target.state === "out"){
 				console.log("Invalid target!");
-				ret["outcome"] = player.handle + ' selected an Invalid Target';
+				ret["error"] = "Invalid Target";
 				return ret;
 			}
 		}
@@ -191,6 +187,11 @@ class Gamestate {
 		let removeVal = player.discardCard(card);
 		if(removeVal == -1){
 			throw "Card Not Found";
+		}
+
+		// Set player state if invun
+		if(player.state == "invun"){
+			this.getPlayer(playerSocket).state = "in";
 		}
 
 		// console.log(this.players[targetSocket]);
@@ -286,6 +287,7 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
+		console.log(this.players);
 		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
@@ -301,26 +303,32 @@ class Gamestate {
 			console.log(maxPlayer.handle + " won");
 			var scoreboard;
 			loveConnector.nextRound(maxPlayer.handle);
-			loveConnector.scoreboard()
-				.then(data =>{
-					var retList = [maxPlayer.handle, data];
-					return retList;
-				})
-				.catch(err => console.log(err));
+			return {score: loveConnector.scoreboard(), winner:maxPlayer.handle };
+				// .then(data =>{
+				// 	var retList = [maxPlayer.handle, data];
+				// 	return retList;
+				// })
+				// .catch(err => console.log(err));
 		}
 		let inCount = 0;
 		let lastPlayer = null;
 		for(var x in this.players){
-			if(this.players[x].state !==  "out"){
+			if(this.players[x].state != "out"){
 				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
 			}
 		}
 		loveConnector.nextRound(lastPlayer.handle);
+		console.log(lastPlayer.handle + " won the round!");
 		if(inCount == 1){
 			console.log("GAME OVER");
-			return loveConnector.scoreboard();
+			return { score: loveConnector.scoreboard(), winner: lastPlayer.handle };
+				// .then(data =>{
+				// 	var retList = [lastPlayer.handle, data];
+				// 	return retList;
+				// })
+				// .catch(err => console.log(err));
 		}
 		return null;
 	}

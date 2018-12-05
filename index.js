@@ -135,6 +135,15 @@ io.on('connection', (socket) => {
 		let players = game.players;
 		let targetSocket = '';
 
+		let count = 0
+		for (var key in players) {
+			console.log('\n\nChecking' , count , 'to' , data.target);
+			if(count == data.target){
+				targetSocket = key;
+				break;
+			}
+		}
+
 		console.log('Target:' , data.target);
 		let target = undefined;
 		if(data.target !== undefined) {
@@ -159,12 +168,12 @@ io.on('connection', (socket) => {
 		var x = game.checkEnd();
 		console.log(x);
 		if(x != null){
-			x.then(function(data){
+			let winner = x.winner;
+			x.score.then(function(data){
 				let scoreboard = data[0];
-				let winner = data[1];
 				console.log("Game Over");
 				console.log(data);
-				io.sockets.emit('gameOver', {"winner":winner, "scoreboard": scoreboard});
+				io.sockets.emit('gameOver', { "winner":winner, "scoreboard":scoreboard });
 			}).catch(err => console.log(err));
 
 		} else {
