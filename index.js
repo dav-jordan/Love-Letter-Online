@@ -106,12 +106,17 @@ io.on('connection', (socket) => {
 
 		game.playCard(socket.id, data.target, data.card, data.param);
 		// TODO Invalid action handling
+		
+		if(game.checkEnd()){
+			console.log("Game Over");
+			io.sockets.emit('gameOver', {});
+			return;	
+		}
 
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 
 		let nextPlayer = game.switchTurns();
 		io.sockets.emit('newTurn', { currPlayer: nextPlayer.getHidden() });
-		
 	});
 });
