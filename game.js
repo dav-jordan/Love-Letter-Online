@@ -5,10 +5,11 @@ class Gamestate {
 		// Initiale variables
 		this.players = {};
 		this.activePlayer = -1;
-		this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
-			"Priest", "Priest", "Baron", "Baron", 
-			"Handmaid", "Handmaid", "Prince", "Prince",
-			"King", "Countess", "Princess"];
+		/*this.cards = ["Guard", "Guard", "Guard", "Guard", "Guard",
+		  "Priest", "Priest", "Baron", "Baron", 
+		  "Handmaid", "Handmaid", "Prince", "Prince",
+		  "King", "Countess", "Princess"];*/
+		this.cards = ["Guard", "Baron", "Handmaid", "Prince"];
 		this.discard = [];
 
 	}
@@ -207,7 +208,7 @@ class Gamestate {
 		}else if(card === "King"){
 			var thisPlayer = this.getPlayer(playerSocket);
 			var targetPlayer = this.getPlayer(targetSocket);
-			
+
 			// swap
 			console.log("Initiating swap:\nplayer 1:" + targetPlayer.cards + "\nplayer 2:" + thisPlayer.cards + "\n");
 			var tmpCardList = targetPlayer.cards;
@@ -241,6 +242,20 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
+		if(this.cards.length == 0){
+			var maxPlayer = null;
+			for(var x in this.players){
+				if(maxPlayer === null){
+					maxPlayer = this.players[x];
+					continue;
+				}
+				if(this.getCardValue(this.players[x].cards[0]) > this.getCardValue(maxPlayer.cards[0])){
+					maxPlayer = this.players[x];
+				}
+			}
+			console.log(maxPlayer.handle + " won");
+			return true;
+		}
 		let inCount = 0;
 		for(var x in this.players){
 			if(this.players[x].state == "in") inCount++;			
