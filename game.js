@@ -288,7 +288,8 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
-		// let loveConnector = new loveDB();
+		console.log(this.players);
+		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
 			for(var x in this.players){
@@ -301,20 +302,30 @@ class Gamestate {
 				}
 			}
 			console.log(maxPlayer.handle + " won");
-			// loveConnector.nextRound(this.id, maxPlayer.handle);
-			return true;
+			var scoreboard;
+			loveConnector.nextRound(maxPlayer.handle);
+			loveConnector.scoreboard()
+				.then(data =>{
+					var retList = [maxPlayer.handle, data];
+					return retList;	
+				})
+				.catch(err => console.log(err));
 		}
 		let inCount = 0;
 		let lastPlayer = null;
 		for(var x in this.players){
 			if(this.players[x].state == "in"){
+				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
 			}
 		}
-		// loveConnector.nextRound(this.id, lastPlayer.handle);
-
-		if(inCount == 1) return true;
+		loveConnector.nextRound(lastPlayer.handle);
+		if(inCount == 1){
+			console.log("GAME OVER");
+			return loveConnector.scoreboard();
+		}
+		return null;
 	}
 }
 
