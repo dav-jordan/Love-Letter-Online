@@ -1,5 +1,5 @@
 var Player = require('./player');
-
+var loveDB = require('./loveConnector');
 class Gamestate {
 	constructor() {
 		// Initiale variables
@@ -67,12 +67,13 @@ class Gamestate {
 		let count = 0;
 		for (var key in this.players) {
 			if(count === this.activePlayer) {
-				if(this.players[key].state !== "out")
+				if(this.players[key].state !== "out"){
 					// If that player is not out, return them
+					this.draw(key);
 					return this.players[key];
-				else {
+				}else {
 					// If the player is out, switch turns, recursing this method
-					return this.switchTurns;	
+					return this.switchTurns();	
 				}
 			}
 			count++;
@@ -145,14 +146,17 @@ class Gamestate {
 		console.log('Target:' , targetSocket);
 		console.log('Card:' , card);
 		console.log('Param:' , parameter);
-
 		let playerCards = this.getPlayer(playerSocket).cards;
 		console.log('Player\'s cards:' , playerCards);
 
 
 		// remove cards from hand
 		console.log("\n\nREMOVING CARD NOW");
-		this.getPlayer(playerSocket).discardCard(card);
+		let removeVal = this.getPlayer(playerSocket).discardCard(card);
+		if(removeVal == -1){
+			//throw "CARD NOT FOUND";
+			return;
+		}
 		console.log(this.getPlayer(playerSocket));
 
 		// TODO Add card event handling

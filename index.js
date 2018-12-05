@@ -86,6 +86,7 @@ io.on('connection', (socket) => {
 		// TODO Invalid action handling
 
 		let nextPlayer = game.switchTurns();
+		console.log("Next player: " + nextPlayer);
 		io.sockets.emit('newTurn', { currPlayer: nextPlayer});
 		
 	});

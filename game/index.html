@@ -27,6 +27,12 @@
 						param: document.getElementById('param').value});
 			console.log(document.getElementById('target').value);
 		}
+	
+		function playCard(){
+			socket.emit('cardPlayed', {card: document.getElementById('card').value,
+						target: document.getElementById('target').value,
+						param: document.getElementById('param').value});
+		}
 
 		socket.on('yourPlayer', (data) => {
 			console.log('\nYou are' , data.player);
@@ -42,6 +48,8 @@
 		});
 	</script>	
   <input id="gamestate" type="button" value="gameStart" onclick="func();" />
+
+  <input id="gamestate" type="button" value="play card" onclick="playCard();" />
   </body>
 
 </html>

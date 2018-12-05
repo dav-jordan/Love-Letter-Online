@@ -43,7 +43,11 @@ class Player {
 	discardCard(card) {
 		let ind = this.cards.indexOf(card);
 		console.log("CARD IS AT " + ind);
+		if(ind == -1){
+			return ind;
+		}
 		this.cards.splice(ind, 1);
+		return ind;
 	}
 
 	// State methods
