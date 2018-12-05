@@ -85,7 +85,10 @@ io.on('connection', (socket) => {
 			currSocket.emit('yourPlayer', { player: thisPlayer });
 		}
 
-		let nextPlayer = game.switchTurns();
+		// Get the Starting Player
+		let startingPlayer = game.switchTurns();
+
+		// Tell all Players the Starting Player
 		io.sockets.emit('newTurn', { currPlayer: nextPlayer.getHidden() });
 	});
 
