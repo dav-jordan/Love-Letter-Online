@@ -10,7 +10,9 @@ class Gamestate {
 		  "Handmaid", "Handmaid", "Prince", "Prince",
 		  "King", "Countess", "Princess"];
 		this.discard = [];
-
+		this.id;
+		let loveConnector = loveDB();
+		loveConnector.createGame([]).then(data => this.id = data).catch(err => console.log(err));
 	}
 
 	// Player methods
@@ -27,6 +29,8 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
+			let loveConnector = loveDB();
+			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
 			return true;
 		}
 		return false;
@@ -153,7 +157,11 @@ class Gamestate {
 		console.log('Param:' , parameter);
 		let playerCards = this.getPlayer(playerSocket).cards;
 		console.log('Player\'s cards:' , playerCards);
-
+		
+		if(this.getPlayer(targetSocket).state == "invun"){
+			console.log("Invalid target!");
+			return;
+		}
 
 		// remove cards from hand
 		console.log("\n\nREMOVING CARD NOW");
@@ -163,7 +171,9 @@ class Gamestate {
 			return;
 		}
 		console.log(this.getPlayer(playerSocket));
-
+		if(this.getPlayer(playerSocket).state == "invun"){
+			this.getPlayer(playerSocket).state = "in");
+		}
 		// TODO Add card event handling
 
 		// console.log(this.players[targetSocket]);
@@ -176,6 +186,9 @@ class Gamestate {
 				targetPlayer.state = "out";
 				this.addToDiscard(parameter);
 			}
+		}else if(card === "Priest"){
+			var targetPlayer = this.getPlayer(targetSocket);
+			console.log(targetPlayer.cards);
 		}else if(card === "Baron"){
 			console.log("Card is BARON");
 			var targetPlayer = this.getPlayer(targetSocket);
@@ -191,7 +204,7 @@ class Gamestate {
 				this.addToDiscard(thisPlayer.cards[0]);
 				thisPlayer.discardCard(thisPlayer.cards[0]);
 				thisPlayer.status = "out";
-			}else{
+			}else if(targetHandVal < thisHandVal){
 				this.addToDiscard(this.targetPlayer.cards[0]);
 				targetPlayer.discardCard(targetPlayer.cards[0]);
 				targetPlayer.status = "out";
@@ -246,6 +259,7 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
+		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
 			for(var x in this.players){
@@ -258,12 +272,19 @@ class Gamestate {
 				}
 			}
 			console.log(maxPlayer.handle + " won");
+			loveConnector.nextRound(this.id, maxPlayer.handle);
 			return true;
 		}
 		let inCount = 0;
+		let lastPlayer = null;
 		for(var x in this.players){
-			if(this.players[x].state == "in") inCount++;			
+			if(this.players[x].state == "in"){
+				inCount++;
+				lastPlayer = this.players[x];
+			}			
 		}
+		loveConnector.nextRound(this.id, lastPlayer.handle);
+		
 		if(inCount == 1) return true;
 	}
 }
