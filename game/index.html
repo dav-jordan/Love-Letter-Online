@@ -46,10 +46,17 @@
 			console.log('\nSubmitting players to server');
 			socket.emit('addPlayer', {handle: document.getElementById('handle').value});	
 		});
+		
+		socket.on('gameOver', (data) => {
+			console.log("game over");
+			document.getElementById("test").innerHTML = "game over";
+		});
 	</script>	
   <input id="gamestate" type="button" value="gameStart" onclick="func();" />
 
   <input id="gamestate" type="button" value="play card" onclick="playCard();" />
+  <p id="test"></p>
+
   </body>
 
 </html>

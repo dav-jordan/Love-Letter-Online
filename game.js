@@ -182,7 +182,8 @@ class Gamestate {
 			console.log(targetHandVal + "," + thisHandVal);
 
 			if(targetHandVal > thisHandVal){
-				this.addToDiscard(this.thisPlayer.cards[0]);
+				console.log(thisPlayer.cards);
+				this.addToDiscard(thisPlayer.cards[0]);
 				thisPlayer.discardCard(thisPlayer.cards[0]);
 				thisPlayer.status = "out";
 			}else{
@@ -208,9 +209,12 @@ class Gamestate {
 			var targetPlayer = this.getPlayer(targetSocket);
 			
 			// swap
+			console.log("Initiating swap:\nplayer 1:" + targetPlayer.cards + "\nplayer 2:" + thisPlayer.cards + "\n");
 			var tmpCardList = targetPlayer.cards;
 			targetPlayer.cards = thisPlayer.cards;
 			thisPlayer.cards = tmpCardList;
+
+			console.log("Finished swap:\nplayer 1:" + targetPlayer.cards + "\nplayer 2:" + thisPlayer.cards + "\n");
 		}else if(card === "Countess"){
 		}else if(card === "Princess"){
 			var thisPlayer = this.getPlayer(playerSocket);
@@ -235,6 +239,13 @@ class Gamestate {
 
 	addToDiscard(card) {
 		this.discard.push(card);
+	}
+	checkEnd(){
+		let inCount = 0;
+		for(var x in this.players){
+			if(this.players[x].state == "in") inCount++;			
+		}
+		if(inCount == 1) return true;
 	}
 }
 

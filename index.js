@@ -84,6 +84,12 @@ io.on('connection', (socket) => {
 
 		game.playCard(socket.id, data.target, data.card, data.param);
 		// TODO Invalid action handling
+		
+		if(game.checkEnd()){
+			console.log("Game Over");
+			io.sockets.emit('gameOver', {});
+			return;	
+		}
 
 		let nextPlayer = game.switchTurns();
 		console.log("Next player: " + nextPlayer);
