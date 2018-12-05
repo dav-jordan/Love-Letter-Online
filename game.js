@@ -10,7 +10,9 @@ class Gamestate {
 		  "Handmaid", "Handmaid", "Prince", "Prince",
 		  "King", "Countess", "Princess"];
 		this.discard = [];
-
+		this.id;
+		let loveConnector = loveDB();
+		loveConnector.createGame([]).then(data => this.id = data).catch(err => console.log(err));
 	}
 
 	// Player methods
@@ -27,6 +29,8 @@ class Gamestate {
 			// TODO remove this test
 			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
+			let loveConnector = loveDB();
+			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
 			return true;
 		}
 		return false;
@@ -124,6 +128,7 @@ class Gamestate {
 			return ret;
 		}
 	}
+
 	getCardValue(card){
 		switch(card){
 			case "Guard":
@@ -144,90 +149,120 @@ class Gamestate {
 				return 8;
 		}
 	}
+
 	playCard(playerSocket, targetSocket, card, parameter) {
 		console.log('Player:' , playerSocket);
 		console.log('Target:' , targetSocket);
 		console.log('Card:' , card);
 		console.log('Param:' , parameter);
-		let playerCards = this.getPlayer(playerSocket).cards;
+
+		let ret = {};
+
+		// Get the player
+		let player = this.getPlayer(playerSocket);
+		let playerCards = player.cards;
 		console.log('Player\'s cards:' , playerCards);
+		
+		// Check if target exists
+		if(targetSocket !== undefined) {
+			let target = this.getPlayer(targetSocket);
 
-
-		// remove cards from hand
-		console.log("\n\nREMOVING CARD NOW");
-		let removeVal = this.getPlayer(playerSocket).discardCard(card);
-		if(removeVal == -1){
-			//throw "CARD NOT FOUND";
-			return;
+			// Check if target is invun, if they are, return an error
+			if(player.state === "invun" || player.state === "out"){
+				console.log("Invalid target!");
+				ret["error"] = "Invalid Target";
+				return ret;
+			}
 		}
-		console.log(this.getPlayer(playerSocket));
 
-		// TODO Add card event handling
+		// Discard the card
+		console.log("\nDiscarding Card");
+		let removeVal = player.discardCard(card);
+		if(removeVal == -1){
+			throw "Card Not Found";
+		}
+
+		// Set player state if invun
+		if(player.state == "invun"){
+			this.getPlayer(playerSocket).state = "in";
+		}
 
 		// console.log(this.players[targetSocket]);
 		if(card == "Guard"){
-			console.log("Card is guard");
-			var targetPlayer = this.getPlayer(targetSocket);
-			if(targetPlayer.cards.includes(parameter)){
-				console.log("Got em boi");
-				targetPlayer.discardCard(parameter);
-				targetPlayer.state = "out";
+			console.log("Played Guard");
+
+			// Check if the targets card is the guessed card
+			if(target.cards.includes(parameter)){
+				ret['info'] = "Success";
+				ret['outcome'] = player.handle , 'discarded a Guard. They successfully guessed that' , target.handle , 'had a' , parameter + '!';
+
+				console.log("Guess Success");
+				target.discardCard(parameter);
+				target.state = "out";
 				this.addToDiscard(parameter);
+			} else {
+				ret['outcome'] = player.handle , 'discarded a Guard. They failed to guess' , target.handle + '\'s card!';
 			}
-		}else if(card === "Baron"){
-			console.log("Card is BARON");
-			var targetPlayer = this.getPlayer(targetSocket);
-			var thisPlayer = this.getPlayer(playerSocket);
+		} else if(card === "Priest"){
+			// Return info of card in hand
+			ret['info'] = target.cards[0];
+			ret['outcome'] = player.handle , 'discarded Priest, targeting' , target.handle + '!';
+		} else if(card === "Baron"){
+			let targetHandVal = this.getCardValue(target.cards[0]);
+			let thisHandVal = this.getCardValue(pplayer.cards[0]);
 
-			let targetHandVal = this.getCardValue(targetPlayer.cards[0]);
-			let thisHandVal = this.getCardValue(thisPlayer.cards[0]);
+			if(targetHandVal > thisHandVal) {
+				this.addToDiscard(player.cards[0]);
+				player.discardCard(player.cards[0]);
+				player.status = "out";
 
-			console.log(targetHandVal + "," + thisHandVal);
+				//ret['info'] = target.cards[0];
+				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'lost!';
+			} else if(targetHandVal < thisHandVal){
+				this.addToDiscard(target.cards[0]);
+				target.discardCard(target.cards[0]);
+				target.status = "out";
 
-			if(targetHandVal > thisHandVal){
-				console.log(thisPlayer.cards);
-				this.addToDiscard(thisPlayer.cards[0]);
-				thisPlayer.discardCard(thisPlayer.cards[0]);
-				thisPlayer.status = "out";
-			}else{
-				this.addToDiscard(this.targetPlayer.cards[0]);
-				targetPlayer.discardCard(targetPlayer.cards[0]);
-				targetPlayer.status = "out";
+				//ret['info'] = target.cards[0];	
+				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'won!';
+			} else {	
+				//ret['info'] = target.cards[0];	
+				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! It\'s a tie!';
 			}
-		}else if(card === "Handmaiden"){
-			console.log("Card is Handmaiden");
-			var thisPlayer = this.getPlayer(playerSocket);
-			thisPlayer.state = "invun";
-		}else if(card === "Prince"){
-			var targetPlayer = this.getPlayer(targetSocket);
-			var discarded = targetPlayer.cards[1];
-			targetPlayer.discardCard(discarded);
+		} else if(card === "Handmaiden") {
+			player.state = "invun";
+			
+			ret['outcome'] = player.handle , 'discarded Handmaid, they are invunerable till next turn!';
+		} else if(card === "Prince") {
+			let discarded = target.cards[0];
+			target.discardCard(discarded);
 			if(discarded === "Princess"){
-				targetPlayer.status = "out";
-			}else{
+				target.status = "out";
+			} else{
 				this.draw(targetSocket);
 			}
-		}else if(card === "King"){
-			var thisPlayer = this.getPlayer(playerSocket);
-			var targetPlayer = this.getPlayer(targetSocket);
+			ret['outcome'] = player.handle , 'discarded Prince, targeting' , target.handle + '! They discarded a' , discarded + '!';
+		} else if(card === "King") {
+			// Players Swap Hands
+			var tmpCardList = target.cards;
+			target.cards = player.cards;
+			player.cards = tmpCardList;
 
-			// swap
-			console.log("Initiating swap:\nplayer 1:" + targetPlayer.cards + "\nplayer 2:" + thisPlayer.cards + "\n");
-			var tmpCardList = targetPlayer.cards;
-			targetPlayer.cards = thisPlayer.cards;
-			thisPlayer.cards = tmpCardList;
-
-			console.log("Finished swap:\nplayer 1:" + targetPlayer.cards + "\nplayer 2:" + thisPlayer.cards + "\n");
-		}else if(card === "Countess"){
-		}else if(card === "Princess"){
-			var thisPlayer = this.getPlayer(playerSocket);
-			thisPlayer.state = "out";
+			ret['outcome'] = player.handle , 'discarded King, switching hands with' , target.handle + '!';
+		} else if(card === "Countess") {
+			ret['outcome'] = target.handle , 'discarded a Countess!';
+		} else if(card === "Princess") {	
+			player.state = "out";
+			
+			ret['outcome'] = target.handle , 'discarded a Princess! They are out of the round!';
 		}
 
-		//e remove cards from hand and add to discard
+		// Remove cards from hand and add to discard
 		// this.getPlayer(playerSocket).discardCard(card);
 		this.addToDiscard(card);
 		console.log(this.players);
+
+		return ret;
 	}
 
 
@@ -244,6 +279,7 @@ class Gamestate {
 		this.discard.push(card);
 	}
 	checkEnd(){
+		let loveConnector = new loveDB();
 		if(this.cards.length == 0){
 			var maxPlayer = null;
 			for(var x in this.players){
@@ -256,12 +292,19 @@ class Gamestate {
 				}
 			}
 			console.log(maxPlayer.handle + " won");
+			loveConnector.nextRound(this.id, maxPlayer.handle);
 			return true;
 		}
 		let inCount = 0;
+		let lastPlayer = null;
 		for(var x in this.players){
-			if(this.players[x].state == "in") inCount++;			
+			if(this.players[x].state == "in"){
+				inCount++;
+				lastPlayer = this.players[x];
+			}			
 		}
+		loveConnector.nextRound(this.id, lastPlayer.handle);
+		
 		if(inCount == 1) return true;
 	}
 }
