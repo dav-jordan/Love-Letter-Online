@@ -170,6 +170,12 @@ class Gamestate {
 		let playerCards = player.cards;
 		console.log('Player\'s cards:' , playerCards);
 		var target;
+
+		// Set player state if invun
+		if(player.state == "invun"){
+			this.getPlayer(playerSocket).state = "in";
+		}
+
 		// Check if target exists
 		if(targetSocket !== undefined) {
 			target = this.getPlayer(targetSocket);
@@ -177,7 +183,7 @@ class Gamestate {
 			// Check if target is invun, if they are, return an error
 			if(player.state === "invun" || player.state === "out"){
 				console.log("Invalid target!");
-				ret["error"] = "Invalid Target";
+				ret["outcome"] = player.handle + ' selected an Invalid Target';
 				return ret;
 			}
 		}
