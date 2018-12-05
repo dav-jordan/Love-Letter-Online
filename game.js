@@ -237,6 +237,7 @@ class Gamestate {
 				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! It\'s a tie!';
 			}
 		} else if(card === "Handmaid") {
+			console.log("Handmaid");
 			player.state = "invun";
 
 			ret['outcome'] = player.handle + ' discarded Handmaid, they are invunerable till next turn!';
@@ -312,7 +313,7 @@ class Gamestate {
 		let inCount = 0;
 		let lastPlayer = null;
 		for(var x in this.players){
-			if(this.players[x].state == "in"){
+			if(this.players[x].state != "out"){
 				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
