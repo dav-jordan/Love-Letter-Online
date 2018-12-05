@@ -230,7 +230,7 @@ class Gamestate {
 			} else if(targetHandVal < thisHandVal){
 				this.addToDiscard(target.cards[0]);
 				target.discardCard(target.cards[0]);
-				target.status = "out";
+				target.state = "out";
 
 				//ret['info'] = target.cards[0];
 				ret['outcome'] = player.handle + ' discarded Baron, target ' + target.handle + '! And ' + player.handle + ' won!';
@@ -246,7 +246,7 @@ class Gamestate {
 			let discarded = target.cards[0];
 			target.discardCard(discarded);
 			if(discarded === "Princess"){
-				target.status = "out";
+				target.state = "out";
 			} else{
 				this.draw(targetSocket);
 			}
