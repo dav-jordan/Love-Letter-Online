@@ -124,6 +124,7 @@ class Gamestate {
 			return ret;
 		}
 	}
+
 	getCardValue(card){
 		switch(card){
 			case "Guard":
@@ -144,6 +145,7 @@ class Gamestate {
 				return 8;
 		}
 	}
+
 	playCard(playerSocket, targetSocket, card, parameter) {
 		console.log('Player:' , playerSocket);
 		console.log('Target:' , targetSocket);
