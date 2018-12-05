@@ -1,5 +1,6 @@
 var playerCard = "<img id=\"pCard1\" src=\"images/cards/guard.jpg\" width=\"150\" height=\"200\"alt=\"card\" />";
 var opponentTemplate = "<input type=\"image\" src=\"images/cards/face-down.jpeg\" width=\"150\" height=\"200\"alt=\"card\"";
+var takeInput = false;
 var opponents = [
   "<div />",
   "<div />",
@@ -52,10 +53,17 @@ function takeTurn(data) {
   if(data.currPlayer._handle !== user) {
     listen("outcome", function(data) {
       console.log(data);
+      document.getElementById("info").innerText = data.outcome;
+      update();
     })
     return;
   }
   console.log("this player's turn");
+
+  listen("info", function(data) {
+    console.log(data);
+    alert("They have " + data.info + "!");
+  });
 
   if(turn) {
     turn = false;
@@ -161,10 +169,16 @@ function discard1() {
   discard = card1;
   if(!(card1.includes("handmaid") || card1.includes("princess") || card1.includes("countess"))) {
     console.log("target required");
+    takeInput = true;
     getPlayers();
   } else {
     console.log("no target required");
     // update();
+    let c = discard.split("").reverse().join("")
+    c = c.substring(4, c.indexOf("/"));
+    c = c.split("").reverse().join("");
+    c = c.charAt(0).toUpperCase() + c.slice(1);
+    sendCommand("cardPlayed", {target: undefined, card: c, param: ""});
   }
   playerCard =
   "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard2").src + "\" "
@@ -179,16 +193,21 @@ function discard2() {
   discard = card2;
   if(!(card2.includes("handmaid") || card2.includes("princess") || card2.includes("countess"))) {
     console.log("target required");
+    takeInput = true;
     getPlayers();
   } else {
     console.log("no target required");
-
+    let c = discard.split("").reverse().join("")
+    c = c.substring(4, c.indexOf("/"));
+    c = c.split("").reverse().join("");
+    c = c.charAt(0).toUpperCase() + c.slice(1);
+    sendCommand("cardPlayed", {target: undefined, card: c, param: undefined});
+    update();
   }
   playerCard =
   "<img  id=\"pCard1\" src=\"" + document.getElementById("pCard1").src + "\" "
   + "width=\"150\" height=\"200\"alt=\"card\" />";
   takingTurn = false;
-  update();
   // setTimeout(discard2, 2000);
 }
 

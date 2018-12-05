@@ -259,11 +259,11 @@ class Gamestate {
 
 			ret['outcome'] = player.handle + ' discarded King, switching hands with ' + target.handle + '!';
 		} else if(card === "Countess") {
-			ret['outcome'] = target.handle + ' discarded a Countess!';
+			ret['outcome'] = player.handle + ' discarded a Countess!';
 		} else if(card === "Princess") {
 			player.state = "out";
 
-			ret['outcome'] = target.handle + ' discarded a Princess! They are out of the round!';
+			ret['outcome'] = player.handle + ' discarded a Princess! They are out of the round!';
 		}
 
 		// Remove cards from hand and add to discard

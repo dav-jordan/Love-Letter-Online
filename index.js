@@ -145,7 +145,11 @@ io.on('connection', (socket) => {
 		}
 
 		console.log('Target:' , data.target);
-		let ret = game.playCard(socket.id, game.getSocket(data.target).socket, data.card, data.param);
+		let target = undefined;
+		if(data.target !== undefined) {
+			target = game.getSocket(data.target).socket
+		}
+		let ret = game.playCard(socket.id, target, data.card, data.param);
 
 		// Check for error
 		if(ret['error'] !== undefined) {
@@ -161,11 +165,11 @@ io.on('connection', (socket) => {
 			io.sockets.emit('outcome', { outcome: ret['outcome'] });
 		}
 
-		if(game.checkEnd()){
-			console.log("Game Over");
-			io.sockets.emit('gameOver', {});
-			return;
-		}
+		// if(game.checkEnd()){
+		// 	console.log("Game Over");
+		// 	io.sockets.emit('gameOver', {});
+		// 	return;
+		// }
 
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
