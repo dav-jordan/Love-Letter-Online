@@ -166,7 +166,9 @@ class Gamestate {
 			return;
 		}
 		console.log(this.getPlayer(playerSocket));
-
+		if(this.getPlayer(playerSocket).state == "invun"){
+			this.getPlayer(playerSocket).state = "in");
+		}
 		// TODO Add card event handling
 
 		// console.log(this.players[targetSocket]);
@@ -179,6 +181,9 @@ class Gamestate {
 				targetPlayer.state = "out";
 				this.addToDiscard(parameter);
 			}
+		}else if(card === "Priest"){
+			var targetPlayer = this.getPlayer(targetSocket);
+			console.log(targetPlayer.cards);
 		}else if(card === "Baron"){
 			console.log("Card is BARON");
 			var targetPlayer = this.getPlayer(targetSocket);
@@ -194,7 +199,7 @@ class Gamestate {
 				this.addToDiscard(thisPlayer.cards[0]);
 				thisPlayer.discardCard(thisPlayer.cards[0]);
 				thisPlayer.status = "out";
-			}else{
+			}else if(targetHandVal < thisHandVal){
 				this.addToDiscard(this.targetPlayer.cards[0]);
 				targetPlayer.discardCard(targetPlayer.cards[0]);
 				targetPlayer.status = "out";
