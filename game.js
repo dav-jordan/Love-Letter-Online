@@ -306,7 +306,7 @@ class Gamestate {
 			loveConnector.scoreboard()
 				.then(data =>{
 					var retList = [maxPlayer.handle, data];
-					return retList;	
+					return retList;
 				})
 				.catch(err => console.log(err));
 		}

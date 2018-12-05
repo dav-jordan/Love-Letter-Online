@@ -174,7 +174,7 @@ io.on('connection', (socket) => {
 				io.sockets.emit('gameOver', {});
 			}).catch(err => console.log(err));
 
-		} else { 
+		} else {
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 
