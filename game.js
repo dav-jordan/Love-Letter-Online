@@ -24,8 +24,6 @@ class Gamestate {
 
 	addPlayer(socket, handle) {
 		if(Object.keys(this.players).length < 4) {
-			// TODO remove this test
-			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
 			let loveConnector = new loveDB();
 			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
@@ -170,6 +168,12 @@ class Gamestate {
 		let playerCards = player.cards;
 		console.log('Player\'s cards:' , playerCards);
 		var target;
+
+		// Set player state if invun
+		if(player.state == "invun"){
+			this.getPlayer(playerSocket).state = "in";
+		}
+
 		// Check if target exists
 		if(targetSocket !== undefined) {
 			target = this.getPlayer(targetSocket);
@@ -177,7 +181,7 @@ class Gamestate {
 			// Check if target is invun, if they are, return an error
 			if(player.state === "invun" || player.state === "out"){
 				console.log("Invalid target!");
-				ret["error"] = "Invalid Target";
+				ret["outcome"] = player.handle + " targetted an untargettable Player!";
 				return ret;
 			}
 		}
@@ -187,11 +191,6 @@ class Gamestate {
 		let removeVal = player.discardCard(card);
 		if(removeVal == -1){
 			throw "Card Not Found";
-		}
-
-		// Set player state if invun
-		if(player.state == "invun"){
-			this.getPlayer(playerSocket).state = "in";
 		}
 
 		// console.log(this.players[targetSocket]);
