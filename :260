@@ -212,19 +212,19 @@ class Gamestate {
 			ret['outcome'] = player.handle , 'discarded Priest, targeting' , target.handle + '!';
 		} else if(card === "Baron"){
 			let targetHandVal = this.getCardValue(target.cards[0]);
-			let thisHandVal = this.getCardValue(player.cards[0]);
+			let thisHandVal = this.getCardValue(pplayer.cards[0]);
 
 			if(targetHandVal > thisHandVal) {
 				this.addToDiscard(player.cards[0]);
 				player.discardCard(player.cards[0]);
-				player.state = "out";
+				player.status = "out";
 
 				//ret['info'] = target.cards[0];
 				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'lost!';
 			} else if(targetHandVal < thisHandVal){
 				this.addToDiscard(target.cards[0]);
 				target.discardCard(target.cards[0]);
-				target.state = "out";
+				target.status = "out";
 
 				//ret['info'] = target.cards[0];	
 				ret['outcome'] = player.handle + 'discarded Baron, target' , target.handle + '! And' , player.handle , 'won!';
@@ -240,7 +240,7 @@ class Gamestate {
 			let discarded = target.cards[0];
 			target.discardCard(discarded);
 			if(discarded === "Princess"){
-				target.state = "out";
+				target.status = "out";
 			} else{
 				this.draw(targetSocket);
 			}
@@ -257,7 +257,7 @@ class Gamestate {
 		} else if(card === "Princess") {	
 			player.state = "out";
 			
-			ret['outcome'] = player.handle , 'discarded a Princess! They are out of the round!';
+			ret['outcome'] = target.handle , 'discarded a Princess! They are out of the round!';
 		}
 
 		// Remove cards from hand and add to discard
@@ -308,21 +308,18 @@ class Gamestate {
 		let lastPlayer = null;
 		for(var x in this.players){
 			if(this.players[x].state == "in"){
-				console.log(this.players[x].state);
 				inCount++;
 				lastPlayer = this.players[x];
 			}			
 		}
 		loveConnector.nextRound(lastPlayer.handle);
-		console.log(inCount == 1);
+		console.log(inCount);
+		var scoreboard;
 		loveConnector.scoreboard()
-			.then(function(data){
+			.then(data =>{
 				var retList = [lastPlayer.handle, data];
 				console.log(data);
-				if(inCount == 1){
-					console.log("GAME OVER"); 
-					return retList;
-				}
+				if(inCount == 1) return retList;
 			})
 			.catch(err => console.log(err));
 	}

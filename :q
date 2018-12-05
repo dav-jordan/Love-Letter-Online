@@ -152,9 +152,8 @@ io.on('connection', (socket) => {
 		if(ret['outcome'] !== undefined) {
 			io.sockets.emit('outcome', { outcome: ret['outcome'] });
 		}
-		var x = game.checkEnd();
-		console.log(x);
-		if(x){
+		var x;
+		if(x = game.checkEnd()){
 			console.log("Game Over");
 			console.log(x);
 			io.sockets.emit('gameOver', {});
