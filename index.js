@@ -169,9 +169,11 @@ io.on('connection', (socket) => {
 		console.log(x);
 		if(x != null){
 			x.then(function(data){
+				let scoreboard = data[0];
+				let winner = data[1];
 				console.log("Game Over");
 				console.log(data);
-				io.sockets.emit('gameOver', {});
+				io.sockets.emit('gameOver', {"winner":winner, "scoreboard": scoreboard});
 			}).catch(err => console.log(err));
 
 		} else { 
