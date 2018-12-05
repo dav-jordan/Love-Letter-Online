@@ -32,6 +32,7 @@ listen("yourPlayer", function(data) {
   if(data.player.status === "out") {
     document.getElementById("bod").innerHTML = "<h1 class=\"headers\">You Lose!</h1>";
   }
+  update();
 });
 function opponentCards() {
   // console.log("displaying opponent cards");
@@ -72,6 +73,7 @@ function playersTurn(data) {
 
 function takeTurn(data) {
   console.log(data);
+  playerCards();
   if(data.currPlayer._handle !== user) {
     return;
   }

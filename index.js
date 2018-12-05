@@ -165,11 +165,11 @@ io.on('connection', (socket) => {
 			io.sockets.emit('outcome', { outcome: ret['outcome'] });
 		}
 
-		// if(game.checkEnd()){
-		// 	console.log("Game Over");
-		// 	io.sockets.emit('gameOver', {});
-		// 	return;
-		// }
+		if(game.checkEnd()){
+			console.log("Game Over");
+			io.sockets.emit('gameOver', {});
+			return;
+		}
 
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
