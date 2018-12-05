@@ -13,7 +13,12 @@ let game = undefined;
 
 // Statically serve files
 app.use('/', Express.static('game'));
- 
+
+
+app.get('/', (req, res) => {
+	res.send('<h1>Hello world<h/1>');
+});
+
 
 
 // Check if PORT was predefined on system
@@ -55,7 +60,7 @@ io.on('connection', (socket) => {
 		if(game !== undefined) {
 			// Create the player
 			console.log('\nAdding player...');
-			game.addPlayer(socket.id, data.handle);	
+			game.addPlayer(socket.id, data.handle);
 
 			// Tell first added player they're host
 			if(Object.keys(game.players).length === 1) {
@@ -75,12 +80,12 @@ io.on('connection', (socket) => {
 	// Randomly selects a Player to start the game
 	socket.on('gameStart', (data) => {
 		// Get all sockets connected
-		let sockets = Object.keys(io.sockets.sockets);	
-		
+		let sockets = Object.keys(io.sockets.sockets);
+
 		for(let i = 0; i < sockets.length; i++) {
 			// Draws a card for that player
 			game.draw(sockets[i]);
-		
+
 			// Gets the player object and gives it to that user
 			let thisPlayer = game.getPlayer(sockets[i]);
 
@@ -158,7 +163,7 @@ io.on('connection', (socket) => {
 			console.log("Game Over");
 			console.log(x);
 			io.sockets.emit('gameOver', {});
-			return;	
+			return;
 		}
 
 		let discardPile = game.discard;
