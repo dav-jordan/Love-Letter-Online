@@ -13,11 +13,7 @@ let game = undefined;
 
 // Statically serve files
 app.use('/', Express.static('game'));
-
-
-app.get('/', (req, res) => {
-	res.send('<h1>Hello world<h/1>');
-}); 
+ 
 
 
 // Check if PORT was predefined on system
@@ -115,8 +111,16 @@ io.on('connection', (socket) => {
 	socket.on('turnStart', (data) => {
 		if(game !== undefined) {
 			game.draw(socket.id);
-			
-			socket.emit('yourPlayer', { player: game.getPlayer(socket.id) });
+		}
+
+		// Refresh all player's states
+		for(let i = 0; i < sockets.length; i++) {
+			// Gets the player object and gives it to that user
+			let thisPlayer = game.getPlayer(sockets[i]);
+
+			// Get socket and emit
+			let currSocket = io.sockets.sockets[sockets[i]];
+			currSocket.emit('yourPlayer', { player: thisPlayer });
 		}
 	});
 
@@ -133,9 +137,22 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		game.playCard(socket.id, data.target, data.card, data.param);
-		// TODO Invalid action handling
+		let ret = game.playCard(socket.id, data.target, data.card, data.param);
 		
+		// Check for error
+		if(ret['error'] !== undefined) {
+			socket.emit('cardPlayError', {});
+			return;
+		} 
+		// Check for info
+		if(ret['info'] !== undefined) {
+			socket.emit('info', { info: ret['info'] });
+		}	
+		// Check for outcome
+		if(ret['outcome'] !== undefined) {
+			io.sockets.emit('outcome', { outcome: ret['outcome'] });
+		}
+
 		if(game.checkEnd()){
 			console.log("Game Over");
 			io.sockets.emit('gameOver', {});
