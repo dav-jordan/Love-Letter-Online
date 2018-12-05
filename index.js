@@ -165,14 +165,6 @@ io.on('connection', (socket) => {
 			io.sockets.emit('outcome', { outcome: ret['outcome'] });
 		}
 
-<<<<<<< HEAD
-		if(game.checkEnd()){
-			console.log("Game Over");
-			io.sockets.emit('gameOver', {});
-			return;
-		}
-
-=======
 		var x = game.checkEnd();
 		console.log(x);
 		if(x != null){
@@ -182,7 +174,6 @@ io.on('connection', (socket) => {
 				io.sockets.emit('gameOver', {});
 			}).catch(err => console.log(err));
 		} else { 
->>>>>>> 9d0db2f35920f7182e1c1ab85025ab2fb00fd167
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 
