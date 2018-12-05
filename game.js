@@ -24,8 +24,6 @@ class Gamestate {
 
 	addPlayer(socket, handle) {
 		if(Object.keys(this.players).length < 4) {
-			// TODO remove this test
-			let testId = Object.keys(this.players).length;
 			this.players[socket] = new Player(socket, handle, [], "in");
 			let loveConnector = new loveDB();
 			loveConnector.addPlayer(handle).then(data => console.log(data)).catch(err => console.log(err));
@@ -195,11 +193,6 @@ class Gamestate {
 			throw "Card Not Found";
 		}
 
-		// Set player state if invun
-		if(player.state == "invun"){
-			this.getPlayer(playerSocket).state = "in";
-		}
-
 		// console.log(this.players[targetSocket]);
 		if(card == "Guard"){
 			console.log("Played Guard");
@@ -311,7 +304,7 @@ class Gamestate {
 			loveConnector.scoreboard()
 				.then(data =>{
 					var retList = [maxPlayer.handle, data];
-					return retList;	
+					return retList;
 				})
 				.catch(err => console.log(err));
 		}

@@ -135,15 +135,6 @@ io.on('connection', (socket) => {
 		let players = game.players;
 		let targetSocket = '';
 
-		let count = 0
-		for (var key in players) {
-			console.log('\n\nChecking' , count , 'to' , data.target);
-			if(count == data.target){
-				targetSocket = key;
-				break;
-			}
-		}
-
 		console.log('Target:' , data.target);
 		let target = undefined;
 		if(data.target !== undefined) {
@@ -176,7 +167,7 @@ io.on('connection', (socket) => {
 				io.sockets.emit('gameOver', {"winner":winner, "scoreboard": scoreboard});
 			}).catch(err => console.log(err));
 
-		} else { 
+		} else {
 		let discardPile = game.discard;
 		io.sockets.emit('discardUpdate', { discardPile: discardPile });
 
